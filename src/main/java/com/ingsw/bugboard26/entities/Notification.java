@@ -21,14 +21,14 @@ public class Notification
     @Id
     @ManyToOne
     @EqualsAndHashCode.Exclude
-    @JoinColumn(name = "USERNAME", referencedColumnName = "username")
+    @JoinColumn(name = "ADMINUSERNAME", referencedColumnName = "username")
     @JsonBackReference
     private TeamAdmin teamAdmin;
 
     @Id
     @ManyToOne
     @EqualsAndHashCode.Exclude
-    @JoinColumn(name = "USERNAME", referencedColumnName = "username")
+    @JoinColumn(name = "MEMBERUSERNAME", referencedColumnName = "username")
     @JsonBackReference
     private TeamMember teamMember;
 }

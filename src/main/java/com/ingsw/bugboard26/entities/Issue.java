@@ -45,7 +45,7 @@ public class Issue
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "USERNAME", referencedColumnName = "username")
+    @JoinColumn(name = "MEMBERUSERNAME", referencedColumnName = "username")
     @JsonBackReference
     private TeamMember teamMember;
 

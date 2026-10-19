@@ -13,9 +13,9 @@ import java.time.LocalDate;
 public class IssueComment
 {
     @Id
-    @Column(name = "USERNAME")
+    @Column(name = "MEMBERUSERNAME")
     @Basic(optional = false)
-    private String memberName;
+    private String memberUsername;
 
     @Id
     @Column(name = "IDISSUE")
