@@ -12,16 +12,23 @@ import java.util.List;
 @Transactional
 public class ProjectServiceImpl implements ProjectService
 {
-    @Autowired(required = false)
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
+
+    @Autowired
+    public ProjectServiceImpl(final ProjectRepository projectRepository)
+    {
+        this.projectRepository = projectRepository;
+    }
 
     @Override
-    public List<Project> selectAllProjects() {
+    public List<Project> selectAllProjects()
+    {
         return projectRepository.findAll();
     }
 
     @Override
-    public Project selecrByIdProject(int idProject) {
+    public Project selectByIdProject(int idProject)
+    {
         return projectRepository.findByIdProject(idProject);
     }
 }

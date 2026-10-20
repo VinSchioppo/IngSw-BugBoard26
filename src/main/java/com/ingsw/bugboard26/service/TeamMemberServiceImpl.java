@@ -12,8 +12,13 @@ import java.util.List;
 @Transactional
 public class TeamMemberServiceImpl implements TeamMemberService
 {
+    private final TeamMemberRepository teamMemberRepository;
+
     @Autowired
-    TeamMemberRepository teamMemberRepository;
+    public TeamMemberServiceImpl(final TeamMemberRepository teamMemberRepository)
+    {
+        this.teamMemberRepository = teamMemberRepository;
+    }
 
     @Override
     public List<TeamMember> selectAll()
@@ -25,5 +30,11 @@ public class TeamMemberServiceImpl implements TeamMemberService
     public TeamMember selectByUserame(String username)
     {
         return teamMemberRepository.findByUsername(username);
+    }
+
+    @Override
+    public List<TeamMember> selectAllTeamMemberInfo()
+    {
+        return teamMemberRepository.findAllTeamMemberInfo();
     }
 }

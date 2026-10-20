@@ -1,7 +1,6 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.entities.Project;
-import com.ingsw.bugboard26.entities.TeamMember;
 import com.ingsw.bugboard26.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +20,13 @@ public class ProjectController
 {
     private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
+    private final ProjectService projectService;
+
     @Autowired
-    private ProjectService projectService;
+    public ProjectController(final ProjectService projectService)
+    {
+        this.projectService = projectService;
+    }
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<Project>> getAllProjects()
@@ -39,12 +43,12 @@ public class ProjectController
         return new ResponseEntity<List<Project>>(projects, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/idproject/{idproject}", produces = "application/json")
+    @GetMapping(value = "/id/{idproject}", produces = "application/json")
     public ResponseEntity<Project> getProjectByIdProject(@PathVariable("idproject") int idProject)
     {
         logger.info("****** Cerchiamo il progetto *******");
 
-        Project project = projectService.selecrByIdProject(idProject);
+        Project project = projectService.selectByIdProject(idProject);
 
         if (project == null)
             return new ResponseEntity<Project>(HttpStatus.NO_CONTENT);

@@ -20,10 +20,15 @@ public class IssueController
 {
     private static final Logger logger = LoggerFactory.getLogger(IssueController.class);
 
-    @Autowired
-    private IssueService issueService;
+    private final IssueService issueService;
 
-    @GetMapping(value = "/idissue/{idIssue}", produces = "/application/json")
+    @Autowired
+    public IssueController(final IssueService issueService)
+    {
+        this.issueService = issueService;
+    }
+
+    @GetMapping(value = "/id/{idIssue}", produces = "application/json")
     public ResponseEntity<Issue> getIssueByIdIssue(@PathVariable("idIssue") int idIssue)
     {
         logger.info("****** Cerchiamo l'issue *******");
@@ -38,22 +43,7 @@ public class IssueController
         return new ResponseEntity<Issue>(issue, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/idproject/{idProject}", produces = "/application/json")
-    public ResponseEntity<List<Issue>> getIssuesByIdProject(@PathVariable("idProject") int idProject)
-    {
-        logger.info("****** Cerchiamo le issue per id progetto *******");
-
-        List<Issue> issues = issueService.selectByIdProject(idProject);
-
-        if (issues.isEmpty())
-            return new ResponseEntity<List<Issue>>(HttpStatus.NO_CONTENT);
-
-        logger.info("Numero dei record: {}", issues.size());
-
-        return new ResponseEntity<List<Issue>>(issues, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/memberusername/{memberUsername}", produces = "/application/json")
+    @GetMapping(value = "/memberusername/{memberUsername}", produces = "application/json")
     public ResponseEntity<List<Issue>> getIssuesByMemberUsername(@PathVariable("memberUsername") String memberUsername)
     {
         logger.info("****** Cerchiamo le issues assegnate ad un membro *******");
@@ -68,7 +58,22 @@ public class IssueController
         return new ResponseEntity<List<Issue>>(issues, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/priority/{priority}", produces = "/application/json")
+    @GetMapping(value = "/tag/{nameTag}", produces = "application/json")
+    public ResponseEntity<List<Issue>> getIssuesByTag(@PathVariable("nameTag") String nameTag)
+    {
+        logger.info("****** Cerchiamo le issues che hanno una certa tag *******");
+
+        List<Issue> issues = issueService.selectByTag(nameTag);
+
+        if (issues.isEmpty())
+            return new ResponseEntity<List<Issue>>(HttpStatus.NO_CONTENT);
+
+        logger.info("Numero dei record: {}", issues.size());
+
+        return new ResponseEntity<List<Issue>>(issues, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/priority/{priority}", produces = "application/json")
     public ResponseEntity<List<Issue>> getIssuesByPriority(@PathVariable("priority") int priority)
     {
         logger.info("****** Cerchiamo le issues con priorità {} *******", priority);

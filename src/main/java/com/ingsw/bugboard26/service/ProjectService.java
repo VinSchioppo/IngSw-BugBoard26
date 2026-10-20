@@ -7,5 +7,5 @@ import java.util.List;
 public interface ProjectService
 {
     List<Project> selectAllProjects();
-    Project selecrByIdProject(int idProject);
+    Project selectByIdProject(int idProject);
 }

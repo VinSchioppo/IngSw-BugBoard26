@@ -12,26 +12,35 @@ import java.util.List;
 @Transactional
 public class IssueServiceImpl implements IssueService
 {
-    @Autowired(required = false)
-    IssueRepository issueRepository;
+    private final IssueRepository issueRepository;
+
+    @Autowired
+    public IssueServiceImpl(final IssueRepository issueRepository)
+    {
+        this.issueRepository = issueRepository;
+    }
 
     @Override
-    public Issue selectByIdIssue(int idIssue) {
+    public Issue selectByIdIssue(int idIssue)
+    {
         return issueRepository.findByIdIssue(idIssue);
     }
 
     @Override
-    public List<Issue> selectByIdProject(int idProject) {
-        return issueRepository.findByIdProject(idProject);
+    public List<Issue> selectByMemberUsername(String username)
+    {
+        return issueRepository.findByTeamMemberUsername(username);
     }
 
     @Override
-    public List<Issue> selectByMemberUsername(String username) {
-        return issueRepository.findByMemberUsername(username);
+    public List<Issue> selectByTag(String nameTag)
+    {
+        return issueRepository.findByTagsNameTag(nameTag);
     }
 
     @Override
-    public List<Issue> selectByPriority(int prority) {
-        return issueRepository.findByPrority(prority);
+    public List<Issue> selectByPriority(int priority)
+    {
+        return issueRepository.findByPriority(priority);
     }
 }

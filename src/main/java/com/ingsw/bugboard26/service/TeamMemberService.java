@@ -8,4 +8,6 @@ public interface TeamMemberService
 {
     List<TeamMember> selectAll();
     TeamMember selectByUserame(String username);
+
+    List<TeamMember> selectAllTeamMemberInfo();
 }

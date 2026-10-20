@@ -35,7 +35,6 @@ public class Issue
     private Boolean status;
 
     @Column(name = "DUEDATE")
-    @Temporal(TemporalType.DATE)
     private LocalDate dueDate;
 
     @ManyToOne

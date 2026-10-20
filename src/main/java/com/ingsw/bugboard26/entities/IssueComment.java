@@ -1,6 +1,7 @@
 package com.ingsw.bugboard26.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.ingsw.bugboard26.entities.compositeId.IssueCommentId;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import java.time.LocalDate;
 
 @Entity
+@IdClass(IssueCommentId.class)
 @Table(name = "ISSUECOMMENT")
 @Data
 public class IssueComment
@@ -29,16 +31,17 @@ public class IssueComment
 
     @Column(name = "DATE")
     @Basic(optional = false)
-    @Temporal(TemporalType.DATE)
     private LocalDate date;
 
     @ManyToOne
+    @MapsId
     @EqualsAndHashCode.Exclude
-    @JoinColumn(name = "USERNAME", referencedColumnName = "username")
+    @JoinColumn(name = "MEMBERUSERNAME", referencedColumnName = "username")
     @JsonBackReference
     private TeamMember teamMember;
 
     @ManyToOne
+    @MapsId
     @EqualsAndHashCode.Exclude
     @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
     @JsonBackReference

@@ -10,12 +10,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TeamAdminServiceImpl implements TeamAdminService
 {
-    @Autowired(required = false)
-    TeamAdminRepository teamAdminRepository;
+    private final TeamAdminRepository teamAdminRepository;
+
+    @Autowired
+    public TeamAdminServiceImpl(final TeamAdminRepository teamAdminRepository)
+    {
+        this.teamAdminRepository = teamAdminRepository;
+    }
 
     @Override
     public TeamAdmin selectByUserame(String username)
     {
-        return teamAdminRepository.findByUsername(username);
+        return teamAdminRepository.findByAccountUsername(username);
     }
 }

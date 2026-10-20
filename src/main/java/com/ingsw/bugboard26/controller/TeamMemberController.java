@@ -20,8 +20,13 @@ public class TeamMemberController
 {
     private static final Logger logger = LoggerFactory.getLogger(TeamMemberController.class);
 
+    private final TeamMemberService teamMemberService;
+
     @Autowired
-    TeamMemberService teamMemberService;
+    public TeamMemberController(final TeamMemberService teamMemberService)
+    {
+        this.teamMemberService = teamMemberService;
+    }
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<TeamMember>> listAllTeamMembers()
@@ -51,5 +56,20 @@ public class TeamMemberController
         logger.info("Utente trovato.");
 
         return new ResponseEntity<TeamMember>(member, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/all",produces = "application/json")
+    public ResponseEntity<List<TeamMember>> getAllUserInfo()
+    {
+        logger.info("****** Cerchiamo tutti gli utenti *******");
+
+        List<TeamMember> members = teamMemberService.selectAllTeamMemberInfo();
+
+        if (members == null)
+            return new ResponseEntity<List<TeamMember>>(HttpStatus.NO_CONTENT);
+
+        logger.info("Utente trovato.");
+
+        return new ResponseEntity<List<TeamMember>>(members, HttpStatus.OK);
     }
 }

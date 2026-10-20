@@ -13,13 +13,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "api/teamadmin")
+@RequestMapping(value = "api/admin")
 public class TeamAdminController
 {
     private static final Logger logger = LoggerFactory.getLogger(TeamAdminController.class);
 
+    private final TeamAdminService teamAdminService;
+
     @Autowired
-    TeamAdminService teamAdminService;
+    public TeamAdminController(final TeamAdminService teamAdminService)
+    {
+        this.teamAdminService = teamAdminService;
+    }
 
     @GetMapping(value = "/username/{username}",produces = "application/json")
     public ResponseEntity<TeamAdmin> getAdmin(@PathVariable("username") String username)

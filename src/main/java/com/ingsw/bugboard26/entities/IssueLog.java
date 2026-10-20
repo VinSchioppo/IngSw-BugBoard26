@@ -1,21 +1,20 @@
 package com.ingsw.bugboard26.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.ingsw.bugboard26.entities.compositeId.IssueLogId;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
 @Entity
+@IdClass(IssueLogId.class)
 @Table(name = "ISSUELOG")
 public class IssueLog
 {
     @Id
-    @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
-    @JsonBackReference
-    private Issue issue;
+    @Column(name = "IDISSUE")
+    private int idIssue;
 
     @Id
     @Column(name = "DESCRIPTION")
@@ -23,6 +22,12 @@ public class IssueLog
 
     @Column(name = "DATE")
     @Basic(optional = false)
-    @Temporal(TemporalType.DATE)
     private LocalDate date;
+
+    @ManyToOne
+    @MapsId
+    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
+    @JsonBackReference
+    private Issue issue;
 }

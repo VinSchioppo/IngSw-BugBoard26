@@ -1,10 +1,8 @@
 package com.ingsw.bugboard26.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +24,10 @@ public class TeamMember
     @Basic(optional = false)
     private String password;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "acount", orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account", orphanRemoval = true)
+    @PrimaryKeyJoinColumn
     @JsonManagedReference
-    private TeamAdmin adminAcount;
+    private TeamAdmin adminAccount;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             mappedBy = "teamMember", orphanRemoval = true)
@@ -38,10 +37,19 @@ public class TeamMember
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             mappedBy = "teamMember", orphanRemoval = true)
     @JsonManagedReference
+    @PrimaryKeyJoinColumn
     private List<Notification> notifications = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             mappedBy = "teamMember", orphanRemoval = true)
     @JsonManagedReference
     private List<IssueComment> comments = new ArrayList<>();
+
+    public TeamMember() {}
+
+    public TeamMember(String username, String email)
+    {
+        this.username = username;
+        this.email = email;
+    }
 }
