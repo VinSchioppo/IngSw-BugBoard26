@@ -1,6 +1,6 @@
 package com.ingsw.bugboard26.controller;
 
-import com.ingsw.bugboard26.entities.TeamAdmin;
+import com.ingsw.bugboard26.dto.teamadmin.*;
 import com.ingsw.bugboard26.service.TeamAdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,17 +27,17 @@ public class TeamAdminController
     }
 
     @GetMapping(value = "/username/{username}",produces = "application/json")
-    public ResponseEntity<TeamAdmin> getAdmin(@PathVariable("username") String username)
+    public ResponseEntity<TeamAdminDto> getAdmin(@PathVariable("username") String username)
     {
         logger.info("****** Cerchiamo l'admin *******");
 
-        TeamAdmin admin = teamAdminService.selectByUserame(username);
+        TeamAdminDto admin = teamAdminService.selectByUserame(username);
 
         if (admin == null)
-            return new ResponseEntity<TeamAdmin>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<TeamAdminDto>(HttpStatus.NO_CONTENT);
 
         logger.info("Utente trovato.");
 
-        return new ResponseEntity<TeamAdmin>(admin, HttpStatus.OK);
+        return new ResponseEntity<TeamAdminDto>(admin, HttpStatus.OK);
     }
 }

@@ -30,15 +30,15 @@ public class Notification
 
     @ManyToOne
     @MapsId
-    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "ADMINUSERNAME", referencedColumnName = "username")
+    @EqualsAndHashCode.Exclude
     @JsonBackReference
     private TeamAdmin teamAdmin;
 
     @ManyToOne
     @MapsId
-    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "MEMBERUSERNAME", referencedColumnName = "username")
+    @EqualsAndHashCode.Exclude
     @JsonBackReference
     private TeamMember teamMember;
 }

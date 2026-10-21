@@ -1,6 +1,6 @@
 package com.ingsw.bugboard26.controller;
 
-import com.ingsw.bugboard26.entities.TeamMember;
+import com.ingsw.bugboard26.dto.teammember.*;
 import com.ingsw.bugboard26.service.TeamMemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,48 +28,78 @@ public class TeamMemberController
         this.teamMemberService = teamMemberService;
     }
 
-    @GetMapping(produces = "application/json")
-    public ResponseEntity<List<TeamMember>> listAllTeamMembers()
+    @GetMapping(value = "/all", produces = "application/json")
+    public ResponseEntity<List<TeamMemberInfoDto>> listAllTeamMembers()
     {
         logger.info("****** Otteniamo tutti i team members *******");
 
-        List<TeamMember> members = teamMemberService.selectAll();
+        List<TeamMemberInfoDto> members = teamMemberService.selectAll();
 
         if (members.isEmpty())
-            return new ResponseEntity<List<TeamMember>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<TeamMemberInfoDto>>(HttpStatus.NO_CONTENT);
 
         logger.info("Numero dei record: {}", members.size());
 
-        return new ResponseEntity<List<TeamMember>>(members, HttpStatus.OK);
+        return new ResponseEntity<List<TeamMemberInfoDto>>(members, HttpStatus.OK);
     }
 
     @GetMapping(value = "/username/{username}",produces = "application/json")
-    public ResponseEntity<TeamMember> getUserByUsername(@PathVariable("username") String username)
+    public ResponseEntity<TeamMemberDto> getUserByUsername(@PathVariable("username") String username)
     {
         logger.info("****** Cerchiamo l'utente *******");
 
-        TeamMember member = teamMemberService.selectByUserame(username);
+        TeamMemberDto member = teamMemberService.selectByUsername(username);
 
         if (member == null)
-            return new ResponseEntity<TeamMember>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<TeamMemberDto>(HttpStatus.NO_CONTENT);
 
         logger.info("Utente trovato.");
 
-        return new ResponseEntity<TeamMember>(member, HttpStatus.OK);
+        return new ResponseEntity<TeamMemberDto>(member, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/all",produces = "application/json")
-    public ResponseEntity<List<TeamMember>> getAllUserInfo()
+    @GetMapping(value = "/issues/username/{username}",produces = "application/json")
+    public ResponseEntity<TeamMemberIssuesDto> getUserIssuesByUsername(@PathVariable("username") String username)
     {
-        logger.info("****** Cerchiamo tutti gli utenti *******");
+        logger.info("****** Cerchiamo l'utente *******");
 
-        List<TeamMember> members = teamMemberService.selectAllTeamMemberInfo();
+        TeamMemberIssuesDto member = teamMemberService.selectIssuesByUsername(username);
 
-        if (members == null)
-            return new ResponseEntity<List<TeamMember>>(HttpStatus.NO_CONTENT);
+        if (member == null)
+            return new ResponseEntity<TeamMemberIssuesDto>(HttpStatus.NO_CONTENT);
 
         logger.info("Utente trovato.");
 
-        return new ResponseEntity<List<TeamMember>>(members, HttpStatus.OK);
+        return new ResponseEntity<TeamMemberIssuesDto>(member, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/notifications/username/{username}",produces = "application/json")
+    public ResponseEntity<TeamMemberNotificationsDto> getUserNotificationsByUsername(@PathVariable("username") String username)
+    {
+        logger.info("****** Cerchiamo l'utente *******");
+
+        TeamMemberNotificationsDto member = teamMemberService.selectNotificationsByUsername(username);
+
+        if (member == null)
+            return new ResponseEntity<TeamMemberNotificationsDto>(HttpStatus.NO_CONTENT);
+
+        logger.info("Utente trovato.");
+
+        return new ResponseEntity<TeamMemberNotificationsDto>(member, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/comments/username/{username}",produces = "application/json")
+    public ResponseEntity<TeamMemberCommentsDto> getUserCommentsByUsername(@PathVariable("username") String username)
+    {
+        logger.info("****** Cerchiamo l'utente *******");
+
+        TeamMemberCommentsDto member = teamMemberService.selectCommentsByUsername(username);
+
+        if (member == null)
+            return new ResponseEntity<TeamMemberCommentsDto>(HttpStatus.NO_CONTENT);
+
+        logger.info("Utente trovato.");
+
+        return new ResponseEntity<TeamMemberCommentsDto>(member, HttpStatus.OK);
     }
 }

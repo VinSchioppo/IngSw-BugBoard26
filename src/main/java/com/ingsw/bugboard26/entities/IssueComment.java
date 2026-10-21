@@ -35,15 +35,15 @@ public class IssueComment
 
     @ManyToOne
     @MapsId
-    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "MEMBERUSERNAME", referencedColumnName = "username")
+    @EqualsAndHashCode.Exclude
     @JsonBackReference
     private TeamMember teamMember;
 
     @ManyToOne
     @MapsId
-    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
+    @EqualsAndHashCode.Exclude
     @JsonBackReference
     private Issue issue;
 }

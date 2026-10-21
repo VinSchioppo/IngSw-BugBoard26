@@ -13,7 +13,4 @@ import java.util.List;
 public interface TeamMemberRepository extends JpaRepository<TeamMember, String>
 {
     TeamMember findByUsername(String username);
-
-    @Query("select new TeamMember(tm.username, tm.email) from TeamMember tm")
-    List<TeamMember> findAllTeamMemberInfo();
 }

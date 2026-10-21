@@ -22,8 +22,8 @@ public class IssueTag
 
     @ManyToOne
     @MapsId
-    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
+    @EqualsAndHashCode.Exclude
     @JsonBackReference
     private Issue issue;
 }

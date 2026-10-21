@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,33 +39,42 @@ public class Issue
     private LocalDate dueDate;
 
     @ManyToOne
-    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "IDPROJECT", referencedColumnName = "idProject")
+    @EqualsAndHashCode.Exclude
     @JsonBackReference
     private Project project;
 
     @ManyToOne
     @JoinColumn(name = "MEMBERUSERNAME", referencedColumnName = "username")
+    @EqualsAndHashCode.Exclude
     @JsonBackReference
     private TeamMember teamMember;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             mappedBy = "issue", orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonManagedReference
     private List<IssueTag> tags = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             mappedBy = "issue", orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonManagedReference
     private List<IssueLog> issueLogs = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             mappedBy = "issue", orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonManagedReference
     private List<IssueComment> comments = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             mappedBy = "issue", orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonManagedReference
     private List<IssueImage> images = new ArrayList<>();
 }

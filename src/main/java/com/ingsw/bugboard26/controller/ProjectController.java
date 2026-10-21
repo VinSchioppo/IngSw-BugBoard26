@@ -1,6 +1,6 @@
 package com.ingsw.bugboard26.controller;
 
-import com.ingsw.bugboard26.entities.Project;
+import com.ingsw.bugboard26.dto.project.*;
 import com.ingsw.bugboard26.service.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,33 +28,33 @@ public class ProjectController
         this.projectService = projectService;
     }
 
-    @GetMapping(produces = "application/json")
-    public ResponseEntity<List<Project>> getAllProjects()
+    @GetMapping(value = "/all", produces = "application/json")
+    public ResponseEntity<List<ProjectDto>> getAllProjects()
     {
         logger.info("****** Otteniamo tutti i progetti *******");
 
-        List<Project> projects = projectService.selectAllProjects();
+        List<ProjectDto> projects = projectService.selectAllProjects();
 
         if (projects.isEmpty())
-            return new ResponseEntity<List<Project>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<ProjectDto>>(HttpStatus.NO_CONTENT);
 
         logger.info("Numero dei record: {}", projects.size());
 
-        return new ResponseEntity<List<Project>>(projects, HttpStatus.OK);
+        return new ResponseEntity<List<ProjectDto>>(projects, HttpStatus.OK);
     }
 
     @GetMapping(value = "/id/{idproject}", produces = "application/json")
-    public ResponseEntity<Project> getProjectByIdProject(@PathVariable("idproject") int idProject)
+    public ResponseEntity<ProjectIssuesDto> getProjectByIdProject(@PathVariable("idproject") int idProject)
     {
         logger.info("****** Cerchiamo il progetto *******");
 
-        Project project = projectService.selectByIdProject(idProject);
+        ProjectIssuesDto project = projectService.selectByIdProject(idProject);
 
         if (project == null)
-            return new ResponseEntity<Project>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<ProjectIssuesDto>(HttpStatus.NO_CONTENT);
 
         logger.info("Progetto trovato.");
 
-        return new ResponseEntity<Project>(project, HttpStatus.OK);
+        return new ResponseEntity<ProjectIssuesDto>(project, HttpStatus.OK);
     }
 }

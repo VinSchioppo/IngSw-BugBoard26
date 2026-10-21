@@ -1,13 +1,14 @@
 package com.ingsw.bugboard26.service;
 
-import com.ingsw.bugboard26.entities.TeamMember;
+import com.ingsw.bugboard26.dto.teammember.*;
 
 import java.util.List;
 
 public interface TeamMemberService
 {
-    List<TeamMember> selectAll();
-    TeamMember selectByUserame(String username);
-
-    List<TeamMember> selectAllTeamMemberInfo();
+    List<TeamMemberInfoDto> selectAll();
+    TeamMemberDto selectByUsername(String username);
+    TeamMemberIssuesDto selectIssuesByUsername(String username);
+    TeamMemberCommentsDto selectCommentsByUsername(String username);
+    TeamMemberNotificationsDto selectNotificationsByUsername(String username);
 }

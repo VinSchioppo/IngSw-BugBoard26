@@ -1,13 +1,15 @@
 package com.ingsw.bugboard26.service;
 
-import com.ingsw.bugboard26.entities.Issue;
+import com.ingsw.bugboard26.dto.issue.*;
 
 import java.util.List;
 
 public interface IssueService
 {
-    Issue selectByIdIssue(int idIssue);
-    List<Issue> selectByMemberUsername(String username);
-    List<Issue> selectByTag(String nameTag);
-    List<Issue> selectByPriority(int prority);
+    IssueDto selectByIdIssue(int idIssue);
+    IssueCommentsDto selectCommentsByIdIssue(int idIssue);
+    IssueLogsDto selectLogsByIdIssue(int idIssue);
+    List<IssueInfoDto> selectByMemberUsername(String username);
+    List<IssueInfoDto> selectByTag(String nameTag);
+    List<IssueInfoDto> selectByPriority(int priority);
 }

@@ -3,6 +3,8 @@ package com.ingsw.bugboard26.entities;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,30 +28,30 @@ public class TeamMember
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "account", orphanRemoval = true)
     @PrimaryKeyJoinColumn
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonManagedReference
     private TeamAdmin adminAccount;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             mappedBy = "teamMember", orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonManagedReference
     private List<Issue> issues = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             mappedBy = "teamMember", orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonManagedReference
     @PrimaryKeyJoinColumn
     private List<Notification> notifications = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
             mappedBy = "teamMember", orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonManagedReference
     private List<IssueComment> comments = new ArrayList<>();
-
-    public TeamMember() {}
-
-    public TeamMember(String username, String email)
-    {
-        this.username = username;
-        this.email = email;
-    }
 }

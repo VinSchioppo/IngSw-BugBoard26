@@ -1,8 +1,8 @@
 package com.ingsw.bugboard26.service;
 
-import com.ingsw.bugboard26.entities.TeamAdmin;
+import com.ingsw.bugboard26.dto.teamadmin.*;
 
 public interface TeamAdminService
 {
-    TeamAdmin selectByUserame(String username);
+    TeamAdminDto selectByUserame(String username);
 }

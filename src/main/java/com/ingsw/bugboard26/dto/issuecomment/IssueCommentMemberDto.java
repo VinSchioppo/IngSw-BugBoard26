@@ -1,0 +1,13 @@
+package com.ingsw.bugboard26.dto.issuecomment;
+
+import lombok.Data;
+
+import java.time.LocalDate;
+
+@Data
+public class IssueCommentMemberDto
+{
+    private int idIssue;
+    private String description;
+    private LocalDate date;
+}
