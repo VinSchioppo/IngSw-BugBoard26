@@ -77,4 +77,25 @@ public class Issue
     @ToString.Exclude
     @JsonManagedReference
     private List<IssueImage> images = new ArrayList<>();
+
+
+    public void addTag(IssueTag tag)
+    {
+        tags.add(tag);
+    }
+
+    public void addLog(IssueLog log)
+    {
+        issueLogs.add(log);
+    }
+
+    public void addComment(IssueComment comment)
+    {
+        comments.add(comment);
+    }
+
+    public void addImage(IssueImage image)
+    {
+        images.add(image);
+    }
 }

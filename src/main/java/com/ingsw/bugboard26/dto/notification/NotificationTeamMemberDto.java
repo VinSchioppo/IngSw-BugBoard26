@@ -7,5 +7,4 @@ public class NotificationTeamMemberDto
 {
     private String adminUsername;
     private String description;
-    private Boolean status;
 }

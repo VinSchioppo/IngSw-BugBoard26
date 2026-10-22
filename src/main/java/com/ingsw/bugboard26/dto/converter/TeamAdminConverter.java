@@ -1,11 +1,10 @@
-package com.ingsw.bugboard26.service.converter;
+package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.teamadmin.TeamAdminDto;
 import com.ingsw.bugboard26.entities.TeamAdmin;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TeamAdminConverter
 {
@@ -29,5 +28,24 @@ public class TeamAdminConverter
                 .stream()
                 .map(source -> convertToDto(source, modelMapper))
                 .toList();
+    }
+
+    public static TeamAdmin convertFromNotificationsDto(
+            TeamAdmin teamAdmin, TeamAdminDto teamAdminDto, ModelMapper modelMapper)
+    {
+        TeamAdmin tmpAdmin = null;
+
+        if (teamAdmin != null && teamAdminDto != null)
+        {
+            tmpAdmin = modelMapper.map(teamAdminDto, TeamAdmin.class);
+            tmpAdmin.getNotifications().forEach(
+                    source -> {
+                        source.setAdminUsername(teamAdmin.getUsername());
+                        source.setStatus(false);
+                        teamAdmin.addNotification(source);
+                    });
+        }
+
+        return teamAdmin;
     }
 }

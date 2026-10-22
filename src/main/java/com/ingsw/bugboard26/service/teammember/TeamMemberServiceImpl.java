@@ -1,8 +1,8 @@
-package com.ingsw.bugboard26.service;
+package com.ingsw.bugboard26.service.teammember;
 
 import com.ingsw.bugboard26.dto.teammember.*;
 import com.ingsw.bugboard26.repository.TeamMemberRepository;
-import com.ingsw.bugboard26.service.converter.TeamMemberConverter;
+import com.ingsw.bugboard26.dto.converter.TeamMemberConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,5 +55,13 @@ public class TeamMemberServiceImpl implements TeamMemberService
     public TeamMemberNotificationsDto selectNotificationsByUsername(String username) {
         return TeamMemberConverter.convertToNotificationsDto(
                 teamMemberRepository.findByUsername(username), modelMapper);
+    }
+
+    @Override
+    public void insertNotifications(String username, TeamMemberNotificationsDto notifications)
+    {
+        teamMemberRepository.saveAndFlush(
+                TeamMemberConverter.convertFromNotificationsDto(
+                        teamMemberRepository.findByUsername(username), notifications, modelMapper));
     }
 }

@@ -1,4 +1,4 @@
-package com.ingsw.bugboard26.service.converter;
+package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.project.*;
 import com.ingsw.bugboard26.entities.Project;

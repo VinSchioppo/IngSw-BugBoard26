@@ -54,4 +54,20 @@ public class TeamMember
     @ToString.Exclude
     @JsonManagedReference
     private List<IssueComment> comments = new ArrayList<>();
+
+
+    public void addIssue(Issue issue)
+    {
+        issues.add(issue);
+    }
+
+    public void addNotification(Notification notification)
+    {
+        notifications.add(notification);
+    }
+
+    public void addComment(IssueComment comment)
+    {
+        comments.add(comment);
+    }
 }

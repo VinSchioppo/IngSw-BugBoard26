@@ -1,8 +1,8 @@
-package com.ingsw.bugboard26.service;
+package com.ingsw.bugboard26.service.issue;
 
 import com.ingsw.bugboard26.dto.issue.*;
 import com.ingsw.bugboard26.repository.IssueRepository;
-import com.ingsw.bugboard26.service.converter.IssueConverter;
+import com.ingsw.bugboard26.dto.converter.IssueConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

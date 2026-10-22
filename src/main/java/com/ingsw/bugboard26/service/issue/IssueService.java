@@ -1,4 +1,4 @@
-package com.ingsw.bugboard26.service;
+package com.ingsw.bugboard26.service.issue;
 
 import com.ingsw.bugboard26.dto.issue.*;
 

@@ -1,8 +1,8 @@
-package com.ingsw.bugboard26.service;
+package com.ingsw.bugboard26.service.teamadmin;
 
 import com.ingsw.bugboard26.dto.teamadmin.*;
 import com.ingsw.bugboard26.repository.TeamAdminRepository;
-import com.ingsw.bugboard26.service.converter.TeamAdminConverter;
+import com.ingsw.bugboard26.dto.converter.TeamAdminConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,5 +27,13 @@ public class TeamAdminServiceImpl implements TeamAdminService
     {
         return TeamAdminConverter.convertToDto(
                 teamAdminRepository.findByAccountUsername(username), modelMapper);
+    }
+
+    @Override
+    public void insertNotifications(String username, TeamAdminDto notifications)
+    {
+        teamAdminRepository.saveAndFlush(
+                TeamAdminConverter.convertFromNotificationsDto(
+                        teamAdminRepository.findByAccountUsername(username), notifications, modelMapper));
     }
 }

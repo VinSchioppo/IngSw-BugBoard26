@@ -32,4 +32,10 @@ public class Project
     @ToString.Exclude
     @JsonManagedReference
     private List<Issue> issues = new ArrayList<>();
+
+
+    public void addIssue(Issue issue)
+    {
+        issues.add(issue);
+    }
 }

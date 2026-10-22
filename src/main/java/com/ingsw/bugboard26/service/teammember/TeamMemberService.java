@@ -1,4 +1,4 @@
-package com.ingsw.bugboard26.service;
+package com.ingsw.bugboard26.service.teammember;
 
 import com.ingsw.bugboard26.dto.teammember.*;
 
@@ -11,4 +11,6 @@ public interface TeamMemberService
     TeamMemberIssuesDto selectIssuesByUsername(String username);
     TeamMemberCommentsDto selectCommentsByUsername(String username);
     TeamMemberNotificationsDto selectNotificationsByUsername(String username);
+
+    void insertNotifications(String username, TeamMemberNotificationsDto notifications);
 }

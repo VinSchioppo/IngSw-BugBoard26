@@ -1,7 +1,7 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.dto.issue.*;
-import com.ingsw.bugboard26.service.IssueService;
+import com.ingsw.bugboard26.service.issue.IssueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
