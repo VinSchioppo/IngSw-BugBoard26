@@ -49,4 +49,23 @@ public class ProjectConverter
                 .map(source -> convertToIssuesDto(source, modelMapper))
                 .toList();
     }
+
+    public static Project convertFromIssuesDto(Project project, ProjectIssuesDto projectDto, ModelMapper modelMapper)
+    {
+        Project tmpProject = null;
+
+        if (project != null && projectDto != null)
+        {
+            tmpProject =  modelMapper.map(projectDto, Project.class);
+            tmpProject.getIssues().forEach(
+                    source -> {
+                        source.setProject(project);
+                        source.getTags().forEach(tag -> tag.setIssue(source));
+                        source.getImages().forEach(image -> image.setIssue(source));
+                        project.addIssue(source);
+                    });
+        }
+
+        return project;
+    }
 }

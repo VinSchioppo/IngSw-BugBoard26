@@ -4,11 +4,13 @@ import com.ingsw.bugboard26.dto.teammember.*;
 import com.ingsw.bugboard26.entities.TeamMember;
 import org.modelmapper.ModelMapper;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 public class TeamMemberConverter
 {
-    TeamMemberConverter() {}
+    private TeamMemberConverter() {}
 
     public static TeamMemberDto convertToDto(TeamMember teamMember, ModelMapper modelMapper)
     {
@@ -109,6 +111,25 @@ public class TeamMemberConverter
                 .stream()
                 .map(source -> convertToNotificationsDto(source, modelMapper))
                 .toList();
+    }
+
+    public static TeamMember convertFromCommentsDto(
+            TeamMember teamMember, TeamMemberCommentsDto teamMemberDto, ModelMapper modelMapper)
+    {
+        TeamMember tmpMember = null;
+
+        if (teamMember != null && teamMemberDto != null)
+        {
+            tmpMember =  modelMapper.map(teamMemberDto, TeamMember.class);
+            tmpMember.getComments().forEach(
+                    source -> {
+                        source.setMemberUsername(teamMember.getUsername());
+                        source.setDate(LocalDate.now(ZoneId.systemDefault()));
+                        teamMember.addComment(source);
+                    });
+        }
+
+        return teamMember;
     }
 
     public static TeamMember convertFromNotificationsDto(

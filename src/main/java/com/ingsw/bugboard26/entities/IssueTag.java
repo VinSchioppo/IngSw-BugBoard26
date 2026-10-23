@@ -13,17 +13,14 @@ import lombok.EqualsAndHashCode;
 public class IssueTag
 {
     @Id
-    @Column(name = "IDISSUE")
-    private int idIssue;
-
-    @Id
-    @Column(name = "NAMETAG")
-    private String nameTag;
-
     @ManyToOne
     @MapsId
     @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
     @EqualsAndHashCode.Exclude
     @JsonBackReference
     private Issue issue;
+
+    @Id
+    @Column(name = "NAMETAG")
+    private String nameTag;
 }

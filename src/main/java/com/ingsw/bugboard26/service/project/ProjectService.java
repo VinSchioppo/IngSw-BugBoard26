@@ -8,4 +8,6 @@ public interface ProjectService
 {
     List<ProjectDto> selectAllProjects();
     ProjectIssuesDto selectByIdProject(int idProject);
+
+    void insertIssues(int idProject, ProjectIssuesDto issues);
 }

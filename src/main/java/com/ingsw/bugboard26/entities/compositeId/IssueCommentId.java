@@ -1,15 +1,14 @@
 package com.ingsw.bugboard26.entities.compositeId;
 
+import com.ingsw.bugboard26.entities.Issue;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-public class IssueCommentId implements Serializable
+public class IssueCommentId
 {
     private String memberUsername;
 
-    private int idIssue;
+    private Issue issue;
 
     private String description;
 

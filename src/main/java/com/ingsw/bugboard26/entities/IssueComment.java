@@ -20,9 +20,12 @@ public class IssueComment
     private String memberUsername;
 
     @Id
-    @Column(name = "IDISSUE")
-    @Basic(optional = false)
-    private int idIssue;
+    @ManyToOne
+    @MapsId
+    @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
+    @EqualsAndHashCode.Exclude
+    @JsonBackReference
+    private Issue issue;
 
     @Id
     @Column(name = "DESCRIPTION")
@@ -39,11 +42,4 @@ public class IssueComment
     @EqualsAndHashCode.Exclude
     @JsonBackReference
     private TeamMember teamMember;
-
-    @ManyToOne
-    @MapsId
-    @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
-    @EqualsAndHashCode.Exclude
-    @JsonBackReference
-    private Issue issue;
 }

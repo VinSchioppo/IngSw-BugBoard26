@@ -64,4 +64,20 @@ public class IssueServiceImpl implements IssueService
         return IssueConverter.convertToInfoDto(
                 issueRepository.findByPriority(priority), modelMapper);
     }
+
+    @Override
+    public void insertMember(int idIssue, IssueMemberDto teamMember)
+    {
+        issueRepository.saveAndFlush(
+                IssueConverter.convertFromMemberDto(
+                        issueRepository.findByIdIssue(idIssue), teamMember, modelMapper));
+    }
+
+    @Override
+    public void insertLogs(int idIssue, IssueLogsDto logs)
+    {
+        issueRepository.saveAndFlush(
+                IssueConverter.convertFromLogsDto(
+                        issueRepository.findByIdIssue(idIssue), logs, modelMapper));
+    }
 }

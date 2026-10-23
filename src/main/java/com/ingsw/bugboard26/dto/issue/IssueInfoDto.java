@@ -12,6 +12,7 @@ import java.util.List;
 public class IssueInfoDto
 {
     private int idIssue;
+    private String memberUsername;
     private String title;
     private String description;
     private int priority;

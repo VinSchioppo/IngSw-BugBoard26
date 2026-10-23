@@ -13,8 +13,12 @@ import lombok.EqualsAndHashCode;
 public class IssueImage
 {
     @Id
-    @Column(name = "IDISSUE")
-    private int idIssue;
+    @ManyToOne
+    @MapsId
+    @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
+    @EqualsAndHashCode.Exclude
+    @JsonBackReference
+    private Issue issue;
 
     @Id
     @Column(name = "IMAGENAME")
@@ -23,11 +27,4 @@ public class IssueImage
     @Column(name = "IMAGE")
     @Basic(optional = false)
     private byte[] image;
-
-    @ManyToOne
-    @MapsId
-    @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
-    @EqualsAndHashCode.Exclude
-    @JsonBackReference
-    private Issue issue;
 }

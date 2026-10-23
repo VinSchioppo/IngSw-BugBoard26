@@ -50,7 +50,7 @@ public class TeamAdminController
 
         teamAdminService.insertNotifications(username, notification);
 
-        logger.info("****** Notifica inviata con successo *******");
+        logger.info("****** Notifica inviata con successo. *******");
 
         return new ResponseEntity<TeamAdminDto>(new HttpHeaders(), HttpStatus.CREATED);
     }

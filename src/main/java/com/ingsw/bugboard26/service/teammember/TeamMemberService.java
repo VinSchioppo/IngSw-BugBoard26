@@ -12,5 +12,6 @@ public interface TeamMemberService
     TeamMemberCommentsDto selectCommentsByUsername(String username);
     TeamMemberNotificationsDto selectNotificationsByUsername(String username);
 
+    void insertComments(String username, TeamMemberCommentsDto comments);
     void insertNotifications(String username, TeamMemberNotificationsDto notifications);
 }

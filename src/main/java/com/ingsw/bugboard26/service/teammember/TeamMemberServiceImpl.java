@@ -58,6 +58,14 @@ public class TeamMemberServiceImpl implements TeamMemberService
     }
 
     @Override
+    public void insertComments(String username, TeamMemberCommentsDto comments)
+    {
+        teamMemberRepository.saveAndFlush(
+                TeamMemberConverter.convertFromCommentsDto(
+                        teamMemberRepository.findByUsername(username), comments, modelMapper));
+    }
+
+    @Override
     public void insertNotifications(String username, TeamMemberNotificationsDto notifications)
     {
         teamMemberRepository.saveAndFlush(

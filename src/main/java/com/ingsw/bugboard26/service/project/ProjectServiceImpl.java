@@ -36,4 +36,12 @@ public class ProjectServiceImpl implements ProjectService
         return ProjectConverter.convertToIssuesDto(
                 projectRepository.findByIdProject(idProject), modelMapper);
     }
+
+    @Override
+    public void insertIssues(int idProject, ProjectIssuesDto issues)
+    {
+        projectRepository.saveAndFlush(
+                ProjectConverter.convertFromIssuesDto(
+                        projectRepository.findByIdProject(idProject), issues, modelMapper));
+    }
 }

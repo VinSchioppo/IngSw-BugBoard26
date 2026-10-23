@@ -1,6 +1,5 @@
 package com.ingsw.bugboard26.dto.teammember;
 
-import com.ingsw.bugboard26.dto.issuecomment.IssueCommentDto;
 import com.ingsw.bugboard26.dto.issuecomment.IssueCommentMemberDto;
 import lombok.Data;
 

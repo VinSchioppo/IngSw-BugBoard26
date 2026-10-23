@@ -12,4 +12,7 @@ public interface IssueService
     List<IssueInfoDto> selectByMemberUsername(String username);
     List<IssueInfoDto> selectByTag(String nameTag);
     List<IssueInfoDto> selectByPriority(int priority);
+
+    void insertMember(int idIssue, IssueMemberDto teamMember);
+    void insertLogs(int idIssue, IssueLogsDto logs);
 }

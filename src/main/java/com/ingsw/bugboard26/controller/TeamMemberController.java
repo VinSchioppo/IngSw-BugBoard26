@@ -36,7 +36,7 @@ public class TeamMemberController
         if (members.isEmpty())
             return new ResponseEntity<List<TeamMemberInfoDto>>(HttpStatus.NO_CONTENT);
 
-        logger.info("Numero dei record: {}", members.size());
+        logger.info("Numero dei record: {}.", members.size());
 
         return new ResponseEntity<List<TeamMemberInfoDto>>(members, HttpStatus.OK);
     }
@@ -101,19 +101,34 @@ public class TeamMemberController
         return new ResponseEntity<TeamMemberCommentsDto>(member, HttpStatus.OK);
     }
 
-
-    @PostMapping(value = "/sendnotifications/username/{username}")
-    public ResponseEntity<TeamMemberNotificationsDto> sendNotification(
-            @PathVariable("username") String username, @RequestBody TeamMemberNotificationsDto notification)
+    @PostMapping(value = "/postcomments/username/{username}")
+    public ResponseEntity<TeamMemberCommentsDto> postComments(
+            @PathVariable("username") String username, @RequestBody TeamMemberCommentsDto comments)
     {
         logger.info("****** Mandiamo la notifica *******");
 
-        if(notification == null)
+        if(comments == null)
+            return new ResponseEntity<TeamMemberCommentsDto>(HttpStatus.NO_CONTENT);
+
+        teamMemberService.insertComments(username, comments);
+
+        logger.info("****** Notifica inviata con successo. *******");
+
+        return new ResponseEntity<TeamMemberCommentsDto>(new HttpHeaders(), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/sendnotifications/username/{username}")
+    public ResponseEntity<TeamMemberNotificationsDto> sendNotification(
+            @PathVariable("username") String username, @RequestBody TeamMemberNotificationsDto notifications)
+    {
+        logger.info("****** Mandiamo la notifica *******");
+
+        if(notifications == null)
             return new ResponseEntity<TeamMemberNotificationsDto>(HttpStatus.NO_CONTENT);
 
-        teamMemberService.insertNotifications(username, notification);
+        teamMemberService.insertNotifications(username, notifications);
 
-        logger.info("****** Notifica inviata con successo *******");
+        logger.info("****** Notifica inviata con successo. *******");
 
         return new ResponseEntity<TeamMemberNotificationsDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
