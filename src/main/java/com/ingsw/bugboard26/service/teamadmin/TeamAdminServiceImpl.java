@@ -23,7 +23,7 @@ public class TeamAdminServiceImpl implements TeamAdminService
     }
 
     @Override
-    public TeamAdminDto selectByUserame(String username)
+    public TeamAdminDto selectByUsername(String username)
     {
         return TeamAdminConverter.convertToDto(
                 teamAdminRepository.findByAccountUsername(username), modelMapper);

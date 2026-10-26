@@ -38,6 +38,12 @@ public class ProjectServiceImpl implements ProjectService
     }
 
     @Override
+    public void insertProject(ProjectDto projectDto)
+    {
+        projectRepository.saveAndFlush(ProjectConverter.covertFromDto(projectDto, modelMapper));
+    }
+
+    @Override
     public void insertIssues(int idProject, ProjectIssuesDto issues)
     {
         projectRepository.saveAndFlush(

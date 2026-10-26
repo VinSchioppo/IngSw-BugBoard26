@@ -80,4 +80,20 @@ public class IssueServiceImpl implements IssueService
                 IssueConverter.convertFromLogsDto(
                         issueRepository.findByIdIssue(idIssue), logs, modelMapper));
     }
+
+    @Override
+    public void updateStatus(int idIssue, IssueInfoDto issueInfoDto) {
+        var tmpIssue = issueRepository.findByIdIssue(idIssue);
+        tmpIssue.setStatus(issueInfoDto.getStatus());
+        issueRepository.saveAndFlush(tmpIssue);
+    }
+
+    @Override
+    public String adviceMember()
+    {
+        List<Object[]> countAssignments = issueRepository.findIssuesAssigned();
+        if(!countAssignments.isEmpty())
+            return "{\"username\":\"" + countAssignments.get(0)[0].toString() + "\"}";
+        return null;
+    }
 }

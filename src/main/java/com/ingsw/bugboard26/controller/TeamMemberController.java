@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "api/teammember")
+@RequestMapping(value = "api/members")
 public class TeamMemberController
 {
     private static final Logger logger = LoggerFactory.getLogger(TeamMemberController.class);
@@ -26,7 +26,7 @@ public class TeamMemberController
         this.teamMemberService = teamMemberService;
     }
 
-    @GetMapping(value = "/all", produces = "application/json")
+    @GetMapping(produces = "application/json")
     public ResponseEntity<List<TeamMemberInfoDto>> listAllTeamMembers()
     {
         logger.info("****** Otteniamo tutti i team members *******");
@@ -41,7 +41,7 @@ public class TeamMemberController
         return new ResponseEntity<List<TeamMemberInfoDto>>(members, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/username/{username}",produces = "application/json")
+    @GetMapping(value = "/{username}",produces = "application/json")
     public ResponseEntity<TeamMemberDto> getUserByUsername(@PathVariable("username") String username)
     {
         logger.info("****** Cerchiamo l'utente *******");
@@ -56,7 +56,7 @@ public class TeamMemberController
         return new ResponseEntity<TeamMemberDto>(member, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/issues/username/{username}",produces = "application/json")
+    @GetMapping(value = "/issues/{username}",produces = "application/json")
     public ResponseEntity<TeamMemberIssuesDto> getUserIssuesByUsername(@PathVariable("username") String username)
     {
         logger.info("****** Cerchiamo l'utente *******");
@@ -71,7 +71,7 @@ public class TeamMemberController
         return new ResponseEntity<TeamMemberIssuesDto>(member, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/notifications/username/{username}",produces = "application/json")
+    @GetMapping(value = "/notifications/{username}",produces = "application/json")
     public ResponseEntity<TeamMemberNotificationsDto> getUserNotificationsByUsername(@PathVariable("username") String username)
     {
         logger.info("****** Cerchiamo l'utente *******");
@@ -86,7 +86,7 @@ public class TeamMemberController
         return new ResponseEntity<TeamMemberNotificationsDto>(member, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/comments/username/{username}",produces = "application/json")
+    @GetMapping(value = "/comments/{username}",produces = "application/json")
     public ResponseEntity<TeamMemberCommentsDto> getUserCommentsByUsername(@PathVariable("username") String username)
     {
         logger.info("****** Cerchiamo l'utente *******");
@@ -101,7 +101,39 @@ public class TeamMemberController
         return new ResponseEntity<TeamMemberCommentsDto>(member, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/postcomments/username/{username}")
+    @PostMapping(value = "/login")
+    public ResponseEntity<TeamMemberInfoDto> logIn(@RequestBody TeamMemberInfoDto teamMembers)
+    {
+        logger.info("****** Eseguiamo il log in *******");
+
+        if(teamMembers == null)
+            return new ResponseEntity<TeamMemberInfoDto>(HttpStatus.NO_CONTENT);
+
+        if(teamMemberService.checkLogIn(teamMembers))
+        {
+            logger.info("Log in eseguito con successo.");
+            return new ResponseEntity<TeamMemberInfoDto>(new HttpHeaders(), HttpStatus.OK);
+        }
+        logger.info("Log in fallito.");
+        return new ResponseEntity<TeamMemberInfoDto>(new HttpHeaders(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @PutMapping(value = "/signup")
+    public ResponseEntity<List<TeamMemberInfoDto>> signUp(@RequestBody List<TeamMemberInfoDto> teamMembers)
+    {
+        logger.info("****** Registriamo i nuovi utenti *******");
+
+        if(teamMembers == null)
+            return new ResponseEntity<List<TeamMemberInfoDto>>(HttpStatus.NO_CONTENT);
+
+        teamMemberService.insertTeamMembers(teamMembers);
+
+        logger.info("Utenti registrati con successo.");
+
+        return new ResponseEntity<List<TeamMemberInfoDto>>(new HttpHeaders(), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/comments/{username}")
     public ResponseEntity<TeamMemberCommentsDto> postComments(
             @PathVariable("username") String username, @RequestBody TeamMemberCommentsDto comments)
     {
@@ -112,12 +144,12 @@ public class TeamMemberController
 
         teamMemberService.insertComments(username, comments);
 
-        logger.info("****** Notifica inviata con successo. *******");
+        logger.info("Notifica inviata con successo.");
 
         return new ResponseEntity<TeamMemberCommentsDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/sendnotifications/username/{username}")
+    @PostMapping(value = "/notifications/{username}")
     public ResponseEntity<TeamMemberNotificationsDto> sendNotification(
             @PathVariable("username") String username, @RequestBody TeamMemberNotificationsDto notifications)
     {
@@ -128,8 +160,39 @@ public class TeamMemberController
 
         teamMemberService.insertNotifications(username, notifications);
 
-        logger.info("****** Notifica inviata con successo. *******");
+        logger.info("Notifica inviata con successo.");
 
         return new ResponseEntity<TeamMemberNotificationsDto>(new HttpHeaders(), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/password/{username}")
+    public ResponseEntity<TeamMemberInfoDto> changePassword(
+            @PathVariable("username") String username, @RequestBody TeamMemberInfoDto password)
+    {
+        logger.info("****** Cambiamo la password utente *******");
+
+        if(password == null)
+            return new ResponseEntity<TeamMemberInfoDto>(HttpStatus.NO_CONTENT);
+
+        teamMemberService.updatePassword(username, password);
+
+        logger.info("Password cambiata con successo.");
+
+        return new ResponseEntity<TeamMemberInfoDto>(new HttpHeaders(), HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping(value = "/promotion")
+    public ResponseEntity<List<TeamMemberInfoDto>> promoteMembers(@RequestBody List<TeamMemberInfoDto> teamMembers)
+    {
+        logger.info("****** Promuoviamo utenti ad admin *******");
+
+        if(teamMembers == null)
+            return new ResponseEntity<List<TeamMemberInfoDto>>(HttpStatus.NO_CONTENT);
+
+        teamMemberService.updateToAdmin(teamMembers);
+
+        logger.info("Utenti promossi con successo.");
+
+        return new ResponseEntity<List<TeamMemberInfoDto>>(new HttpHeaders(), HttpStatus.ACCEPTED);
     }
 }

@@ -4,6 +4,8 @@ import com.ingsw.bugboard26.dto.issue.*;
 import com.ingsw.bugboard26.entities.Issue;
 import org.modelmapper.ModelMapper;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 public class IssueConverter
@@ -108,7 +110,7 @@ public class IssueConverter
 
         if(issue != null && issueDto != null)
         {
-            tmpIssue = modelMapper.map(issue, Issue.class);
+            tmpIssue = modelMapper.map(issueDto, Issue.class);
             tmpIssue.getTeamMember().addIssue(issue);
             issue.setTeamMember(tmpIssue.getTeamMember());
         }
@@ -122,10 +124,11 @@ public class IssueConverter
 
         if(issue != null && issueDto != null)
         {
-            tmpIssue = modelMapper.map(issue, Issue.class);
+            tmpIssue = modelMapper.map(issueDto, Issue.class);
             tmpIssue.getIssueLogs().forEach(
                     source -> {
                         source.setIssue(issue);
+                        source.setDate(LocalDate.now(ZoneId.systemDefault()));
                         issue.addLog(source);
                     });
         }

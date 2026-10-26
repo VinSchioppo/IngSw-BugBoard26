@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "api/admin")
+@RequestMapping(value = "api/admins")
 public class TeamAdminController
 {
     private static final Logger logger = LoggerFactory.getLogger(TeamAdminController.class);
@@ -24,12 +24,12 @@ public class TeamAdminController
         this.teamAdminService = teamAdminService;
     }
 
-    @GetMapping(value = "/username/{username}",produces = "application/json")
+    @GetMapping(value = "/{username}",produces = "application/json")
     public ResponseEntity<TeamAdminDto> getAdmin(@PathVariable("username") String username)
     {
         logger.info("****** Cerchiamo l'admin *******");
 
-        TeamAdminDto admin = teamAdminService.selectByUserame(username);
+        TeamAdminDto admin = teamAdminService.selectByUsername(username);
 
         if (admin == null)
             return new ResponseEntity<TeamAdminDto>(HttpStatus.NO_CONTENT);
@@ -39,7 +39,7 @@ public class TeamAdminController
         return new ResponseEntity<TeamAdminDto>(admin, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/sendnotifications/username/{username}")
+    @PostMapping(value = "/notifications/{username}")
     public ResponseEntity<TeamAdminDto> sendNotification(
             @PathVariable("username") String username, @RequestBody TeamAdminDto notification)
     {
@@ -50,7 +50,7 @@ public class TeamAdminController
 
         teamAdminService.insertNotifications(username, notification);
 
-        logger.info("****** Notifica inviata con successo. *******");
+        logger.info("Notifica inviata con successo.");
 
         return new ResponseEntity<TeamAdminDto>(new HttpHeaders(), HttpStatus.CREATED);
     }

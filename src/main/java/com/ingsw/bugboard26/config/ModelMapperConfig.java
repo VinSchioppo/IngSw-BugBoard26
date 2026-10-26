@@ -20,7 +20,10 @@ public class ModelMapperConfig
         modelMapper.getConfiguration().setFieldMatchingEnabled(true);
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         modelMapper.createTypeMap(TeamMember.class, TeamMemberInfoDto.class)
-                .addMappings(m -> m.skip(TeamMemberInfoDto::setAdmin));
+                .addMappings(m -> {
+                    m.skip(TeamMemberInfoDto::setPassword);
+                    m.skip(TeamMemberInfoDto::setIsAdmin);
+                });
         modelMapper.typeMap(Issue.class, IssueInfoDto.class)
                 .addMappings(m -> m.map(
                         source -> source.getTeamMember().getUsername(), IssueInfoDto::setMemberUsername));

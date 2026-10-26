@@ -1,11 +1,13 @@
 package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.teammember.*;
+import com.ingsw.bugboard26.entities.TeamAdmin;
 import com.ingsw.bugboard26.entities.TeamMember;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TeamMemberConverter
@@ -39,7 +41,7 @@ public class TeamMemberConverter
         if (teamMember != null)
         {
             teamMemberDto =  modelMapper.map(teamMember, TeamMemberInfoDto.class);
-            teamMemberDto.setAdmin(teamMember.getAdminAccount() != null);
+            teamMemberDto.setIsAdmin(teamMember.getAdminAccount() != null);
         }
 
         return teamMemberDto;
@@ -113,6 +115,29 @@ public class TeamMemberConverter
                 .toList();
     }
 
+    public static List<TeamMember> convertFromInfoDto(List<TeamMemberInfoDto> teamMembersDto, ModelMapper modelMapper)
+    {
+        List<TeamMember> teamMembers = new ArrayList<>();
+
+        if(teamMembersDto != null)
+        {
+            teamMembersDto.forEach(
+                    source -> {
+                        TeamMember teamMember = modelMapper.map(source, TeamMember.class);
+                        teamMember.setPassword(source.getPassword());
+                        if(Boolean.TRUE.equals(source.getIsAdmin()))
+                        {
+                            teamMember.setAdminAccount(new TeamAdmin());
+                            teamMember.getAdminAccount().setAccount(teamMember);
+                            teamMember.getAdminAccount().setUsername(teamMember.getUsername());
+                        }
+                        teamMembers.add(teamMember);
+                    });
+        }
+
+        return teamMembers;
+    }
+
     public static TeamMember convertFromCommentsDto(
             TeamMember teamMember, TeamMemberCommentsDto teamMemberDto, ModelMapper modelMapper)
     {
@@ -146,6 +171,18 @@ public class TeamMemberConverter
                         source.setStatus(false);
                         teamMember.addNotification(source);
                     });
+        }
+
+        return teamMember;
+    }
+
+    public static TeamMember convertToAdmin(TeamMember teamMember)
+    {
+        if (teamMember != null)
+        {
+            teamMember.setAdminAccount(new TeamAdmin());
+            teamMember.getAdminAccount().setAccount(teamMember);
+            teamMember.getAdminAccount().setUsername(teamMember.getUsername());
         }
 
         return teamMember;

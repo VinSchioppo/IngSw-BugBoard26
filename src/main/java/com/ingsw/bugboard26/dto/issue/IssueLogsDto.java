@@ -9,5 +9,5 @@ import java.util.List;
 @Data
 public class IssueLogsDto
 {
-    private List<IssueLogDto> logs = new ArrayList<>();
+    private List<IssueLogDto> issueLogs = new ArrayList<>();
 }

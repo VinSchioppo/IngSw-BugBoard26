@@ -18,7 +18,7 @@ public class IssueDto
     private String title;
     private String description;
     private int priority;
-    private boolean status;
+    private Boolean status;
     private LocalDate dueDate;
 
     private ProjectDto project;

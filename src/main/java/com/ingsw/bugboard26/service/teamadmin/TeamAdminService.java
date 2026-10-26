@@ -4,7 +4,7 @@ import com.ingsw.bugboard26.dto.teamadmin.*;
 
 public interface TeamAdminService
 {
-    TeamAdminDto selectByUserame(String username);
+    TeamAdminDto selectByUsername(String username);
 
     void insertNotifications(String username, TeamAdminDto notifications);
 }

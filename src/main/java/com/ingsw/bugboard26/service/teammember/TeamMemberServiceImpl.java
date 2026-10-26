@@ -58,6 +58,24 @@ public class TeamMemberServiceImpl implements TeamMemberService
     }
 
     @Override
+    public boolean checkLogIn(TeamMemberInfoDto teamMemberDto)
+    {
+        if(teamMemberDto != null)
+        {
+            var teamMember = teamMemberRepository.findByUsername(teamMemberDto.getUsername());
+            return teamMember.getPassword().equals(teamMemberDto.getPassword());
+        }
+        return false;
+    }
+
+    @Override
+    public void insertTeamMembers(List<TeamMemberInfoDto> teamMembers)
+    {
+        teamMemberRepository.saveAll(
+                TeamMemberConverter.convertFromInfoDto(teamMembers, modelMapper));
+    }
+
+    @Override
     public void insertComments(String username, TeamMemberCommentsDto comments)
     {
         teamMemberRepository.saveAndFlush(
@@ -71,5 +89,21 @@ public class TeamMemberServiceImpl implements TeamMemberService
         teamMemberRepository.saveAndFlush(
                 TeamMemberConverter.convertFromNotificationsDto(
                         teamMemberRepository.findByUsername(username), notifications, modelMapper));
+    }
+
+    @Override
+    public void updatePassword(String username, TeamMemberInfoDto teamMemberDto)
+    {
+        var teamMember = teamMemberRepository.findByUsername(username);
+        teamMember.setPassword(teamMemberDto.getPassword());
+        teamMemberRepository.saveAndFlush(teamMember);
+    }
+
+    @Override
+    public void updateToAdmin(List<TeamMemberInfoDto> teamMembersDto)
+    {
+        teamMembersDto.forEach( source ->
+                teamMemberRepository.saveAndFlush(
+                        TeamMemberConverter.convertToAdmin(teamMemberRepository.findByUsername(source.getUsername()))));
     }
 }

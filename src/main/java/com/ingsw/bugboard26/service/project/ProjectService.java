@@ -9,5 +9,6 @@ public interface ProjectService
     List<ProjectDto> selectAllProjects();
     ProjectIssuesDto selectByIdProject(int idProject);
 
+    void insertProject(ProjectDto projectDto);
     void insertIssues(int idProject, ProjectIssuesDto issues);
 }

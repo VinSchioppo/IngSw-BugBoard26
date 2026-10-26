@@ -7,5 +7,6 @@ public class TeamMemberInfoDto
 {
     private String username;
     private String email;
-    private boolean isAdmin;
+    private String password;
+    private Boolean isAdmin;
 }

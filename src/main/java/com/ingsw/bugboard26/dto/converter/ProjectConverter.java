@@ -50,6 +50,13 @@ public class ProjectConverter
                 .toList();
     }
 
+    public static Project covertFromDto(ProjectDto projectDto, ModelMapper modelMapper)
+    {
+        if(projectDto != null)
+            return modelMapper.map(projectDto, Project.class);
+        return null;
+    }
+
     public static Project convertFromIssuesDto(Project project, ProjectIssuesDto projectDto, ModelMapper modelMapper)
     {
         Project tmpProject = null;

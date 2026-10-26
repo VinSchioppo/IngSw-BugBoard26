@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "api/project")
+@RequestMapping(value = "api/projects")
 public class ProjectController
 {
     private static final Logger logger = LoggerFactory.getLogger(ProjectController.class);
@@ -26,7 +26,7 @@ public class ProjectController
         this.projectService = projectService;
     }
 
-    @GetMapping(value = "/all", produces = "application/json")
+    @GetMapping(produces = "application/json")
     public ResponseEntity<List<ProjectDto>> getAllProjects()
     {
         logger.info("****** Otteniamo tutti i progetti *******");
@@ -41,7 +41,7 @@ public class ProjectController
         return new ResponseEntity<List<ProjectDto>>(projects, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/id/{idproject}", produces = "application/json")
+    @GetMapping(value = "/{idproject}", produces = "application/json")
     public ResponseEntity<ProjectIssuesDto> getProjectByIdProject(@PathVariable("idproject") int idProject)
     {
         logger.info("****** Cerchiamo il progetto *******");
@@ -56,7 +56,22 @@ public class ProjectController
         return new ResponseEntity<ProjectIssuesDto>(project, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/reportissue/id/{idProject}")
+    @PutMapping
+    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto project)
+    {
+        logger.info("****** Creiamo un nuovo progetto *******");
+
+        if(project == null)
+            return new ResponseEntity<ProjectDto>(HttpStatus.NO_CONTENT);
+
+        projectService.insertProject(project);
+
+        logger.info("Progetto creato con successo.");
+
+        return new ResponseEntity<ProjectDto>(new HttpHeaders(), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/issues/{idProject}")
     public ResponseEntity<ProjectIssuesDto> reportIssue(
             @PathVariable("idProject") int idProject, @RequestBody ProjectIssuesDto issue)
     {
@@ -67,7 +82,7 @@ public class ProjectController
 
         projectService.insertIssues(idProject, issue);
 
-        logger.info("****** Issue segnalata con successo. *******");
+        logger.info("Issue segnalata con successo.");
 
         return new ResponseEntity<ProjectIssuesDto>(new HttpHeaders(), HttpStatus.CREATED);
     }

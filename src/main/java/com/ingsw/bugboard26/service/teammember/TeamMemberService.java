@@ -12,6 +12,12 @@ public interface TeamMemberService
     TeamMemberCommentsDto selectCommentsByUsername(String username);
     TeamMemberNotificationsDto selectNotificationsByUsername(String username);
 
+    boolean checkLogIn(TeamMemberInfoDto teamMemberDto);
+
+    void insertTeamMembers(List<TeamMemberInfoDto> teamMembers);
     void insertComments(String username, TeamMemberCommentsDto comments);
     void insertNotifications(String username, TeamMemberNotificationsDto notifications);
+
+    void updatePassword(String username, TeamMemberInfoDto teamMemberDto);
+    void updateToAdmin(List<TeamMemberInfoDto> teamMembers);
 }

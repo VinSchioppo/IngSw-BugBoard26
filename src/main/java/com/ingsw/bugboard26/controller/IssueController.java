@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "api/issue")
+@RequestMapping(value = "api/issues")
 public class IssueController
 {
     private static final Logger logger = LoggerFactory.getLogger(IssueController.class);
@@ -26,7 +26,7 @@ public class IssueController
         this.issueService = issueService;
     }
 
-    @GetMapping(value = "/id/{idIssue}", produces = "application/json")
+    @GetMapping(value = "/{idIssue}", produces = "application/json")
     public ResponseEntity<IssueDto> getIssueByIdIssue(@PathVariable("idIssue") int idIssue)
     {
         logger.info("****** Cerchiamo l'issue *******");
@@ -41,7 +41,7 @@ public class IssueController
         return new ResponseEntity<IssueDto>(issue, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/memberusername/{memberUsername}", produces = "application/json")
+    @GetMapping(value = "/member/{memberUsername}", produces = "application/json")
     public ResponseEntity<List<IssueInfoDto>> getIssuesByMemberUsername(@PathVariable("memberUsername") String memberUsername)
     {
         logger.info("****** Cerchiamo le issues assegnate ad un membro *******");
@@ -56,8 +56,8 @@ public class IssueController
         return new ResponseEntity<List<IssueInfoDto>>(issues, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/tag/{nameTag}", produces = "application/json")
-    public ResponseEntity<List<IssueInfoDto>> getIssuesByTag(@PathVariable("nameTag") String nameTag)
+    @GetMapping(params = "tag",produces = "application/json")
+    public ResponseEntity<List<IssueInfoDto>> getIssuesByTag(@RequestParam(name = "tag") String nameTag)
     {
         logger.info("****** Cerchiamo le issues che hanno una certa tag *******");
 
@@ -71,8 +71,8 @@ public class IssueController
         return new ResponseEntity<List<IssueInfoDto>>(issues, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/priority/{priority}", produces = "application/json")
-    public ResponseEntity<List<IssueInfoDto>> getIssuesByPriority(@PathVariable("priority") int priority)
+    @GetMapping(params = "priority",produces = "application/json")
+    public ResponseEntity<List<IssueInfoDto>> getIssuesByPriority(@RequestParam(name = "priority", required = false) Integer priority)
     {
         logger.info("****** Cerchiamo le issues con priorità {} *******", priority);
 
@@ -86,7 +86,7 @@ public class IssueController
         return new ResponseEntity<List<IssueInfoDto>>(issues, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/comments/id/{idIssue}", produces = "application/json")
+    @GetMapping(value = "/comments/{idIssue}", produces = "application/json")
     public ResponseEntity<IssueCommentsDto> getIssueCommentsByIdIssue(@PathVariable("idIssue") int idIssue)
     {
         logger.info("****** Cerchiamo l'issue *******");
@@ -101,7 +101,7 @@ public class IssueController
         return new ResponseEntity<IssueCommentsDto>(issue, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/logs/id/{idIssue}", produces = "application/json")
+    @GetMapping(value = "/logs/{idIssue}", produces = "application/json")
     public ResponseEntity<IssueLogsDto> getIssueLogsByIdIssue(@PathVariable("idIssue") int idIssue)
     {
         logger.info("****** Cerchiamo l'issue *******");
@@ -116,7 +116,7 @@ public class IssueController
         return new ResponseEntity<IssueLogsDto>(issue, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/assignmember/id/{idIssue}")
+    @PostMapping(value = "/member/{idIssue}")
     public ResponseEntity<IssueMemberDto> assignMember(
             @PathVariable("idIssue") int idIssue, @RequestBody IssueMemberDto member)
     {
@@ -127,12 +127,12 @@ public class IssueController
 
         issueService.insertMember(idIssue, member);
 
-        logger.info("****** Issue assegnata con successo. *******");
+        logger.info("Issue assegnata con successo.");
 
         return new ResponseEntity<IssueMemberDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/logchange/id/{idIssue}")
+    @PostMapping(value = "/logs/{idIssue}")
     public ResponseEntity<IssueLogsDto> logChange(
             @PathVariable("idIssue") int idIssue, @RequestBody IssueLogsDto logs)
     {
@@ -143,9 +143,25 @@ public class IssueController
 
         issueService.insertLogs(idIssue, logs);
 
-        logger.info("****** Log salvati con successo. *******");
+        logger.info("Log salvati con successo.");
 
         return new ResponseEntity<IssueLogsDto>(new HttpHeaders(), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/status/{idIssue}")
+    public ResponseEntity<IssueInfoDto> changeStatus(
+            @PathVariable("idIssue") int idIssue, @RequestBody IssueInfoDto logs)
+    {
+        logger.info("****** Aggiorniamo lo stato dell'issue *******");
+
+        if(logs == null)
+            return new ResponseEntity<IssueInfoDto>(HttpStatus.NO_CONTENT);
+
+        issueService.updateStatus(idIssue, logs);
+
+        logger.info("Aggiornamento eseguito con successo.");
+
+        return new ResponseEntity<IssueInfoDto>(new HttpHeaders(), HttpStatus.ACCEPTED);
     }
 
 }

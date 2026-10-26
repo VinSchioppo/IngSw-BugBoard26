@@ -16,7 +16,7 @@ public class IssueInfoDto
     private String title;
     private String description;
     private int priority;
-    private boolean status;
+    private Boolean status;
     private LocalDate dueDate;
 
     private List<IssueTagDto> tags = new ArrayList<>();

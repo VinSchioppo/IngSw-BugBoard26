@@ -15,4 +15,8 @@ public interface IssueService
 
     void insertMember(int idIssue, IssueMemberDto teamMember);
     void insertLogs(int idIssue, IssueLogsDto logs);
+
+    void updateStatus(int idIssue, IssueInfoDto issueInfoDto);
+
+    String adviceMember();
 }
