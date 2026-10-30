@@ -41,8 +41,8 @@ public class IssueController
         return new ResponseEntity<IssueDto>(issue, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/member/{memberUsername}", produces = "application/json")
-    public ResponseEntity<List<IssueInfoDto>> getIssuesByMemberUsername(@PathVariable("memberUsername") String memberUsername)
+    @GetMapping(params = "member", produces = "application/json")
+    public ResponseEntity<List<IssueInfoDto>> getIssuesByMemberUsername(@RequestParam("memberUsername") String memberUsername)
     {
         logger.info("****** Cerchiamo le issues assegnate ad un membro *******");
 
@@ -56,7 +56,7 @@ public class IssueController
         return new ResponseEntity<List<IssueInfoDto>>(issues, HttpStatus.OK);
     }
 
-    @GetMapping(params = "tag",produces = "application/json")
+    @GetMapping(params = "tag", produces = "application/json")
     public ResponseEntity<List<IssueInfoDto>> getIssuesByTag(@RequestParam(name = "tag") String nameTag)
     {
         logger.info("****** Cerchiamo le issues che hanno una certa tag *******");
@@ -71,7 +71,7 @@ public class IssueController
         return new ResponseEntity<List<IssueInfoDto>>(issues, HttpStatus.OK);
     }
 
-    @GetMapping(params = "priority",produces = "application/json")
+    @GetMapping(params = "priority", produces = "application/json")
     public ResponseEntity<List<IssueInfoDto>> getIssuesByPriority(@RequestParam(name = "priority", required = false) Integer priority)
     {
         logger.info("****** Cerchiamo le issues con priorità {} *******", priority);

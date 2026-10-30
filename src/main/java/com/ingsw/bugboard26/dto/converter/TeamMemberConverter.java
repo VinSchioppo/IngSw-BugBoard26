@@ -115,6 +115,25 @@ public class TeamMemberConverter
                 .toList();
     }
 
+    public static TeamMember convertFromInfoDto(TeamMemberInfoDto teamMemberDto, ModelMapper modelMapper)
+    {
+        TeamMember teamMember = null;
+
+        if(teamMemberDto != null)
+        {
+            teamMember = modelMapper.map(teamMemberDto, TeamMember.class);
+            teamMember.setPassword(teamMemberDto.getPassword());
+            if(Boolean.TRUE.equals(teamMemberDto.getIsAdmin()))
+            {
+                teamMember.setAdminAccount(new TeamAdmin());
+                teamMember.getAdminAccount().setAccount(teamMember);
+                teamMember.getAdminAccount().setUsername(teamMember.getUsername());
+            }
+        }
+
+        return teamMember;
+    }
+
     public static List<TeamMember> convertFromInfoDto(List<TeamMemberInfoDto> teamMembersDto, ModelMapper modelMapper)
     {
         List<TeamMember> teamMembers = new ArrayList<>();

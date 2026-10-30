@@ -101,23 +101,6 @@ public class TeamMemberController
         return new ResponseEntity<TeamMemberCommentsDto>(member, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/login")
-    public ResponseEntity<TeamMemberInfoDto> logIn(@RequestBody TeamMemberInfoDto teamMembers)
-    {
-        logger.info("****** Eseguiamo il log in *******");
-
-        if(teamMembers == null)
-            return new ResponseEntity<TeamMemberInfoDto>(HttpStatus.NO_CONTENT);
-
-        if(teamMemberService.checkLogIn(teamMembers))
-        {
-            logger.info("Log in eseguito con successo.");
-            return new ResponseEntity<TeamMemberInfoDto>(new HttpHeaders(), HttpStatus.OK);
-        }
-        logger.info("Log in fallito.");
-        return new ResponseEntity<TeamMemberInfoDto>(new HttpHeaders(), HttpStatus.UNAUTHORIZED);
-    }
-
     @PutMapping(value = "/signup")
     public ResponseEntity<List<TeamMemberInfoDto>> signUp(@RequestBody List<TeamMemberInfoDto> teamMembers)
     {

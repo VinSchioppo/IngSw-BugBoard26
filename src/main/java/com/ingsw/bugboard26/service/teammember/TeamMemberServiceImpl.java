@@ -5,6 +5,7 @@ import com.ingsw.bugboard26.repository.TeamMemberRepository;
 import com.ingsw.bugboard26.dto.converter.TeamMemberConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,13 +16,16 @@ import java.util.List;
 public class TeamMemberServiceImpl implements TeamMemberService
 {
     private final TeamMemberRepository teamMemberRepository;
+    private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
     @Autowired
     public TeamMemberServiceImpl(final TeamMemberRepository teamMemberRepository,
+                                 final PasswordEncoder passwordEncoder,
                                  final ModelMapper modelMapper)
     {
         this.teamMemberRepository = teamMemberRepository;
+        this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
     }
 
@@ -58,21 +62,15 @@ public class TeamMemberServiceImpl implements TeamMemberService
     }
 
     @Override
-    public boolean checkLogIn(TeamMemberInfoDto teamMemberDto)
-    {
-        if(teamMemberDto != null)
-        {
-            var teamMember = teamMemberRepository.findByUsername(teamMemberDto.getUsername());
-            return teamMember.getPassword().equals(teamMemberDto.getPassword());
-        }
-        return false;
-    }
-
-    @Override
     public void insertTeamMembers(List<TeamMemberInfoDto> teamMembers)
     {
-        teamMemberRepository.saveAll(
-                TeamMemberConverter.convertFromInfoDto(teamMembers, modelMapper));
+        teamMembers.forEach(source -> {
+            String password = source.getPassword();
+            source.setPassword(passwordEncoder.encode(password));
+            teamMemberRepository.saveAndFlush(
+                    TeamMemberConverter.convertFromInfoDto(source, modelMapper));
+        });
+
     }
 
     @Override
@@ -95,7 +93,7 @@ public class TeamMemberServiceImpl implements TeamMemberService
     public void updatePassword(String username, TeamMemberInfoDto teamMemberDto)
     {
         var teamMember = teamMemberRepository.findByUsername(username);
-        teamMember.setPassword(teamMemberDto.getPassword());
+        teamMember.setPassword(passwordEncoder.encode(teamMemberDto.getPassword()));
         teamMemberRepository.saveAndFlush(teamMember);
     }
 
