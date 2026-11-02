@@ -89,6 +89,16 @@ public class IssueServiceImpl implements IssueService
     }
 
     @Override
+    public boolean deleteIssue(int idIssue)
+    {
+        var issue = issueRepository.findByIdIssue(idIssue);
+        if(issue == null)
+            return false;
+        issueRepository.delete(issue);
+        return true;
+    }
+
+    @Override
     public String adviceMember()
     {
         List<Object[]> countAssignments = issueRepository.findIssuesAssigned();

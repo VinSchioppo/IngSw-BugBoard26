@@ -5,10 +5,10 @@ import com.ingsw.bugboard26.service.issue.IssueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class IssueController
         IssueDto issue = issueService.selectByIdIssue(idIssue);
 
         if (issue == null)
-            return new ResponseEntity<IssueDto>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<IssueDto>(HttpStatus.NOT_FOUND);
 
         logger.info("Issue trovata.");
 
@@ -49,7 +49,7 @@ public class IssueController
         List<IssueInfoDto> issues = issueService.selectByMemberUsername(memberUsername);
 
         if (issues.isEmpty())
-            return new ResponseEntity<List<IssueInfoDto>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<IssueInfoDto>>(HttpStatus.NOT_FOUND);
 
         logger.info("Numero dei record: {}.", issues.size());
 
@@ -64,7 +64,7 @@ public class IssueController
         List<IssueInfoDto> issues = issueService.selectByTag(nameTag);
 
         if (issues.isEmpty())
-            return new ResponseEntity<List<IssueInfoDto>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<IssueInfoDto>>(HttpStatus.NOT_FOUND);
 
         logger.info("Numero dei record: {}.", issues.size());
 
@@ -79,7 +79,7 @@ public class IssueController
         List<IssueInfoDto> issues = issueService.selectByPriority(priority);
 
         if (issues.isEmpty())
-            return new ResponseEntity<List<IssueInfoDto>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<IssueInfoDto>>(HttpStatus.NOT_FOUND);
 
         logger.info("Numero dei record: {}.", issues.size());
 
@@ -94,7 +94,7 @@ public class IssueController
         IssueCommentsDto issue = issueService.selectCommentsByIdIssue(idIssue);
 
         if (issue == null)
-            return new ResponseEntity<IssueCommentsDto>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<IssueCommentsDto>(HttpStatus.NOT_FOUND);
 
         logger.info("Issue trovata.");
 
@@ -109,7 +109,7 @@ public class IssueController
         IssueLogsDto issue = issueService.selectLogsByIdIssue(idIssue);
 
         if (issue == null)
-            return new ResponseEntity<IssueLogsDto>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<IssueLogsDto>(HttpStatus.NOT_FOUND);
 
         logger.info("Issue trovata.");
 
@@ -164,4 +164,29 @@ public class IssueController
         return new ResponseEntity<IssueInfoDto>(new HttpHeaders(), HttpStatus.ACCEPTED);
     }
 
+    @DeleteMapping(value = "/{idIssue}")
+    public ResponseEntity<?> removeIssue(@PathVariable("idIssue") int idIssue)
+    {
+        logger.info("Eliminiamo la issue con id {}", idIssue);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpStatus httpStatus = HttpStatus.OK;
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode responseNode = mapper.createObjectNode();
+
+        if(issueService.deleteIssue(idIssue))
+        {
+            responseNode.put("code", HttpStatus.OK.toString());
+            responseNode.put("message", "Eliminazione issue " + idIssue + " eseguita con successo!");
+        }
+        else
+        {
+            responseNode.put("code", HttpStatus.NOT_FOUND.toString());
+            responseNode.put("message", "Issue non trovata.");
+            httpStatus = HttpStatus.NOT_FOUND;
+        }
+        return new ResponseEntity<>(responseNode, headers, httpStatus);
+    }
 }

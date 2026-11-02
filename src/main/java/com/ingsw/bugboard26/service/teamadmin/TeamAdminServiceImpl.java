@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class TeamAdminServiceImpl implements TeamAdminService
@@ -23,6 +25,12 @@ public class TeamAdminServiceImpl implements TeamAdminService
     }
 
     @Override
+    public List<TeamAdminInfoDto> selectAll()
+    {
+        return TeamAdminConverter.convertToInfoDto(teamAdminRepository.findAll(), modelMapper);
+    }
+
+    @Override
     public TeamAdminDto selectByUsername(String username)
     {
         return TeamAdminConverter.convertToDto(
@@ -35,5 +43,42 @@ public class TeamAdminServiceImpl implements TeamAdminService
         teamAdminRepository.saveAndFlush(
                 TeamAdminConverter.convertFromNotificationsDto(
                         teamAdminRepository.findByAccountUsername(username), notifications, modelMapper));
+    }
+
+    @Override
+    public void updateStatusNotifications(String username, TeamAdminDto notifications)
+    {
+        var teamAdmin = teamAdminRepository.findByAccountUsername(username);
+        for(var notification : notifications.getNotifications())
+        {
+            for(var adminNotification : teamAdmin.getNotifications())
+            {
+                if(notification.getMemberUsername().equals(adminNotification.getMemberUsername())
+                && notification.getDescription().equals(adminNotification.getDescription()))
+                    adminNotification.setStatus(true);
+            }
+        }
+        teamAdminRepository.saveAndFlush(teamAdmin);
+    }
+
+    @Override
+    public boolean deleteAdmin(String username)
+    {
+        var teamAdmin = teamAdminRepository.findByAccountUsername(username);
+        if(teamAdmin == null)
+            return false;
+        teamAdminRepository.delete(teamAdmin);
+        return true;
+    }
+
+    public boolean deleteNotifications(String username)
+    {
+        var teamAdmin = teamAdminRepository.findByAccountUsername(username);
+        if(teamAdmin == null)
+            return false;
+        teamAdmin.getNotifications().removeIf(
+                source -> Boolean.TRUE.equals(source.getStatus()));
+        teamAdminRepository.saveAndFlush(teamAdmin);
+        return true;
     }
 }

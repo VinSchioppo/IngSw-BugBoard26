@@ -7,8 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.List;
 
@@ -85,5 +88,47 @@ public class ProjectController
         logger.info("Issue segnalata con successo.");
 
         return new ResponseEntity<ProjectIssuesDto>(new HttpHeaders(), HttpStatus.CREATED);
+    }
+
+    @PostMapping(value = "/{idProject}")
+    public ResponseEntity<ProjectDto> changeInfo(
+            @PathVariable("idProject") int idProject, @RequestBody ProjectDto projectDto)
+    {
+        logger.info("****** Aggiorniamo le informazioni del progetto *******");
+
+        if(projectDto == null)
+            return new ResponseEntity<ProjectDto>(HttpStatus.NO_CONTENT);
+
+        projectService.updateProject(idProject, projectDto);
+
+        logger.info("Aggiornamento eseguito con successo.");
+
+        return new ResponseEntity<ProjectDto>(new HttpHeaders(), HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping(value = "/{idProject}")
+    public ResponseEntity<?> removeProject(@PathVariable("idProject") int idProject)
+    {
+        logger.info("Eliminiamo il progetto con id {}", idProject);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpStatus httpStatus = HttpStatus.OK;
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode responseNode = mapper.createObjectNode();
+
+        if(projectService.deleteProject(idProject))
+        {
+            responseNode.put("code", HttpStatus.OK.toString());
+            responseNode.put("message", "Eliminazione progetto " + idProject + " eseguita con successo!!");
+        }
+        else
+        {
+            responseNode.put("code", HttpStatus.NOT_FOUND.toString());
+            responseNode.put("message", "Progetto non trovata.");
+            httpStatus = HttpStatus.NOT_FOUND;
+        }
+        return new ResponseEntity<>(responseNode, headers, httpStatus);
     }
 }

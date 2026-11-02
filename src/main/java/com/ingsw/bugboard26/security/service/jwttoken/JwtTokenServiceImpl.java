@@ -2,12 +2,15 @@ package com.ingsw.bugboard26.security.service.jwttoken;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class JwtTokenServiceImpl implements JwtTokenService
@@ -22,15 +25,17 @@ public class JwtTokenServiceImpl implements JwtTokenService
         this.decoder = decoder;
     }
 
-    public String generateToken(Authentication authentication, String role)
+    public String generateToken(Authentication authentication)
     {
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).toList();
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(1, ChronoUnit.HOURS))
                 .subject(authentication.getName())
-                .claim("role", role)
+                .claim("role", roles)
                 .build();
         var encoderParameters = JwtEncoderParameters.from(
                 JwsHeader.with(MacAlgorithm.HS256).build(), claims);

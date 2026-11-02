@@ -1,6 +1,5 @@
 package com.ingsw.bugboard26.security.service.auth;
 
-import com.ingsw.bugboard26.repository.TeamAdminRepository;
 import com.ingsw.bugboard26.security.model.AuthRequest;
 import com.ingsw.bugboard26.security.model.AuthResponse;
 import com.ingsw.bugboard26.security.service.jwttoken.JwtTokenService;
@@ -13,16 +12,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthServiceImpl implements AuthService
 {
-    private final TeamAdminRepository teamAdminRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
 
     @Autowired
-    public AuthServiceImpl(final TeamAdminRepository teamAdminRepository,
-                           final AuthenticationManager authenticationManager,
+    public AuthServiceImpl(final AuthenticationManager authenticationManager,
                            final JwtTokenService jwtTokenService)
     {
-        this.teamAdminRepository = teamAdminRepository;
         this.authenticationManager = authenticationManager;
         this.jwtTokenService = jwtTokenService;
     }
@@ -33,11 +29,7 @@ public class AuthServiceImpl implements AuthService
                 authRequest.getUsername(), authRequest.getPassword());
         Authentication authentication = authenticationManager.authenticate(token);
 
-        String role = "ROLE_MEMBER";
-        if(teamAdminRepository.findByAccountUsername(authRequest.getUsername()) != null)
-            role = "ROLE_ADMIN";
-
-        String jwtToken = jwtTokenService.generateToken(authentication, role);
+        String jwtToken = jwtTokenService.generateToken(authentication);
         Long expiresAt = jwtTokenService.extractExpirationTime(jwtToken);
 
         return new AuthResponse(jwtToken, authentication.getName(), expiresAt);

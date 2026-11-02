@@ -50,4 +50,27 @@ public class ProjectServiceImpl implements ProjectService
                 ProjectConverter.convertFromIssuesDto(
                         projectRepository.findByIdProject(idProject), issues, modelMapper));
     }
+
+    @Override
+    public void updateProject(int idProject, ProjectDto projectDto)
+    {
+        String title = projectDto.getTitle();
+        String description = projectDto.getDescription();
+        var project = projectRepository.findByIdProject(idProject);
+        if(title != null && !title.isEmpty())
+            project.setTitle(title);
+        if(description != null && !description.isEmpty())
+            project.setDescription(description);
+        projectRepository.saveAndFlush(project);
+    }
+
+    @Override
+    public boolean deleteProject(int idProject)
+    {
+        var project = projectRepository.findByIdProject(idProject);
+        if(project == null)
+            return false;
+        projectRepository.delete(project);
+        return true;
+    }
 }

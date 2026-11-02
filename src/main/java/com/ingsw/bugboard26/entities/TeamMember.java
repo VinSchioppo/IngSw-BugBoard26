@@ -33,8 +33,8 @@ public class TeamMember
     @JsonManagedReference
     private TeamAdmin adminAccount;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-            mappedBy = "teamMember", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST,
+            mappedBy = "teamMember", orphanRemoval = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
@@ -48,8 +48,8 @@ public class TeamMember
     @PrimaryKeyJoinColumn
     private List<Notification> notifications = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-            mappedBy = "teamMember", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST,
+            mappedBy = "teamMember", orphanRemoval = false)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference

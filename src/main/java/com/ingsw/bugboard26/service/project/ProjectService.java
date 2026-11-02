@@ -11,4 +11,8 @@ public interface ProjectService
 
     void insertProject(ProjectDto projectDto);
     void insertIssues(int idProject, ProjectIssuesDto issues);
+
+    void updateProject(int idProject, ProjectDto projectDto);
+
+    boolean deleteProject(int idProject);
 }

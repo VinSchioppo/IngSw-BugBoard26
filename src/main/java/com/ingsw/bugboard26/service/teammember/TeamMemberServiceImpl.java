@@ -104,4 +104,42 @@ public class TeamMemberServiceImpl implements TeamMemberService
                 teamMemberRepository.saveAndFlush(
                         TeamMemberConverter.convertToAdmin(teamMemberRepository.findByUsername(source.getUsername()))));
     }
+
+    @Override
+    public void updateStatusNotifications(String username, TeamMemberNotificationsDto notifications)
+    {
+        var teamMember = teamMemberRepository.findByUsername(username);
+        for(var notification : notifications.getNotifications())
+        {
+            for(var memberNotification : teamMember.getNotifications())
+            {
+                if(notification.getAdminUsername().equals(memberNotification.getAdminUsername())
+                        && notification.getDescription().equals(memberNotification.getDescription()))
+                    memberNotification.setStatus(true);
+            }
+        }
+        teamMemberRepository.saveAndFlush(teamMember);
+    }
+
+    @Override
+    public boolean deleteMember(String username)
+    {
+        var teamMember = teamMemberRepository.findByUsername(username);
+        if(teamMember == null)
+            return false;
+        teamMemberRepository.delete(teamMember);
+        return true;
+    }
+
+    @Override
+    public boolean deleteNotifications(String username)
+    {
+        var teamMember = teamMemberRepository.findByUsername(username);
+        if(teamMember == null)
+            return false;
+        teamMember.getNotifications().removeIf(
+                source -> Boolean.TRUE.equals(source.getStatus()));
+        teamMemberRepository.saveAndFlush(teamMember);
+        return true;
+    }
 }

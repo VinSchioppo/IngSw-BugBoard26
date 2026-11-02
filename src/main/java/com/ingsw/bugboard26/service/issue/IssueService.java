@@ -18,5 +18,7 @@ public interface IssueService
 
     void updateStatus(int idIssue, IssueInfoDto issueInfoDto);
 
+    boolean deleteIssue(int idIssue);
+
     String adviceMember();
 }

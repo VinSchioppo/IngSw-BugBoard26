@@ -18,4 +18,8 @@ public interface TeamMemberService
 
     void updatePassword(String username, TeamMemberInfoDto teamMemberDto);
     void updateToAdmin(List<TeamMemberInfoDto> teamMembers);
+    void updateStatusNotifications(String username, TeamMemberNotificationsDto notifications);
+
+    boolean deleteMember(String username);
+    boolean deleteNotifications(String username);
 }
