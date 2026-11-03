@@ -1,6 +1,7 @@
 package com.ingsw.bugboard26.service.teammember;
 
 import com.ingsw.bugboard26.dto.teammember.*;
+import com.ingsw.bugboard26.exception.duplicate.UsernameDuplicateException;
 import com.ingsw.bugboard26.repository.TeamMemberRepository;
 import com.ingsw.bugboard26.dto.converter.TeamMemberConverter;
 import org.modelmapper.ModelMapper;
@@ -63,14 +64,18 @@ public class TeamMemberServiceImpl implements TeamMemberService
 
     @Override
     public void insertTeamMembers(List<TeamMemberInfoDto> teamMembers)
+            throws UsernameDuplicateException
     {
-        teamMembers.forEach(source -> {
-            String password = source.getPassword();
-            source.setPassword(passwordEncoder.encode(password));
-            teamMemberRepository.saveAndFlush(
-                    TeamMemberConverter.convertFromInfoDto(source, modelMapper));
-        });
+        for(TeamMemberInfoDto teamMemberDto : teamMembers)
+        {
+            if(teamMemberRepository.findByUsername(teamMemberDto.getUsername()) != null)
+                throw new UsernameDuplicateException("L'utente " + teamMemberDto.getUsername() + " esiste già.");
 
+            String password = teamMemberDto.getPassword();
+            teamMemberDto.setPassword(passwordEncoder.encode(password));
+            teamMemberRepository.saveAndFlush(
+                    TeamMemberConverter.convertFromInfoDto(teamMemberDto, modelMapper));
+        }
     }
 
     @Override

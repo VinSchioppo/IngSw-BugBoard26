@@ -1,6 +1,7 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.dto.issue.*;
+import com.ingsw.bugboard26.exception.notfound.IssueNotFoundException;
 import com.ingsw.bugboard26.service.issue.IssueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,28 +29,30 @@ public class IssueController
 
     @GetMapping(value = "/{idIssue}", produces = "application/json")
     public ResponseEntity<IssueDto> getIssueByIdIssue(@PathVariable("idIssue") int idIssue)
+            throws IssueNotFoundException
     {
-        logger.info("****** Cerchiamo l'issue *******");
+        logger.info("****** Cerchiamo la issue con id {} *******", idIssue);
 
         IssueDto issue = issueService.selectByIdIssue(idIssue);
 
         if (issue == null)
-            return new ResponseEntity<IssueDto>(HttpStatus.NOT_FOUND);
+            throw new IssueNotFoundException("L'issue con id " + idIssue + " non è stata trovata.");
 
-        logger.info("Issue trovata.");
+        logger.info("Issue trovate.");
 
         return new ResponseEntity<IssueDto>(issue, HttpStatus.OK);
     }
 
     @GetMapping(params = "member", produces = "application/json")
     public ResponseEntity<List<IssueInfoDto>> getIssuesByMemberUsername(@RequestParam("memberUsername") String memberUsername)
+            throws IssueNotFoundException
     {
         logger.info("****** Cerchiamo le issues assegnate ad un membro *******");
 
         List<IssueInfoDto> issues = issueService.selectByMemberUsername(memberUsername);
 
         if (issues.isEmpty())
-            return new ResponseEntity<List<IssueInfoDto>>(HttpStatus.NOT_FOUND);
+            throw new IssueNotFoundException("Le issue dell'utente " + memberUsername + " non sono state trovate.");
 
         logger.info("Numero dei record: {}.", issues.size());
 
@@ -58,13 +61,14 @@ public class IssueController
 
     @GetMapping(params = "tag", produces = "application/json")
     public ResponseEntity<List<IssueInfoDto>> getIssuesByTag(@RequestParam(name = "tag") String nameTag)
+            throws IssueNotFoundException
     {
         logger.info("****** Cerchiamo le issues che hanno una certa tag *******");
 
         List<IssueInfoDto> issues = issueService.selectByTag(nameTag);
 
         if (issues.isEmpty())
-            return new ResponseEntity<List<IssueInfoDto>>(HttpStatus.NOT_FOUND);
+            throw new IssueNotFoundException("Le issue con tag " + nameTag + " non sono state trovate.");
 
         logger.info("Numero dei record: {}.", issues.size());
 
@@ -73,13 +77,14 @@ public class IssueController
 
     @GetMapping(params = "priority", produces = "application/json")
     public ResponseEntity<List<IssueInfoDto>> getIssuesByPriority(@RequestParam(name = "priority", required = false) Integer priority)
+            throws IssueNotFoundException
     {
         logger.info("****** Cerchiamo le issues con priorità {} *******", priority);
 
         List<IssueInfoDto> issues = issueService.selectByPriority(priority);
 
         if (issues.isEmpty())
-            return new ResponseEntity<List<IssueInfoDto>>(HttpStatus.NOT_FOUND);
+            throw new IssueNotFoundException("Le issue con priorità " + priority + " non sono state trovate.");
 
         logger.info("Numero dei record: {}.", issues.size());
 
@@ -88,13 +93,14 @@ public class IssueController
 
     @GetMapping(value = "/comments/{idIssue}", produces = "application/json")
     public ResponseEntity<IssueCommentsDto> getIssueCommentsByIdIssue(@PathVariable("idIssue") int idIssue)
+            throws IssueNotFoundException
     {
-        logger.info("****** Cerchiamo l'issue *******");
+        logger.info("****** Cerchiamo i commenti dell'issue *******");
 
         IssueCommentsDto issue = issueService.selectCommentsByIdIssue(idIssue);
 
         if (issue == null)
-            return new ResponseEntity<IssueCommentsDto>(HttpStatus.NOT_FOUND);
+            throw new IssueNotFoundException("L'issue con id " + idIssue + " non è stata trovata.");
 
         logger.info("Issue trovata.");
 
@@ -103,15 +109,16 @@ public class IssueController
 
     @GetMapping(value = "/logs/{idIssue}", produces = "application/json")
     public ResponseEntity<IssueLogsDto> getIssueLogsByIdIssue(@PathVariable("idIssue") int idIssue)
+            throws IssueNotFoundException
     {
-        logger.info("****** Cerchiamo l'issue *******");
+        logger.info("****** Cerchiamo i logs dell'issue *******");
 
         IssueLogsDto issue = issueService.selectLogsByIdIssue(idIssue);
 
         if (issue == null)
-            return new ResponseEntity<IssueLogsDto>(HttpStatus.NOT_FOUND);
+            throw new IssueNotFoundException("L'issue con id " + idIssue + " non è stata trovata.");
 
-        logger.info("Issue trovata.");
+        logger.info("Logs trovati.");
 
         return new ResponseEntity<IssueLogsDto>(issue, HttpStatus.OK);
     }
@@ -132,7 +139,7 @@ public class IssueController
         return new ResponseEntity<IssueMemberDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/logs/{idIssue}")
+    @PutMapping(value = "/logs/{idIssue}")
     public ResponseEntity<IssueLogsDto> logChange(
             @PathVariable("idIssue") int idIssue, @RequestBody IssueLogsDto logs)
     {
@@ -166,13 +173,13 @@ public class IssueController
 
     @DeleteMapping(value = "/{idIssue}")
     public ResponseEntity<?> removeIssue(@PathVariable("idIssue") int idIssue)
+            throws IssueNotFoundException
     {
-        logger.info("Eliminiamo la issue con id {}", idIssue);
+        logger.info("****** Eliminiamo l'issue con id {} ******", idIssue);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpStatus httpStatus = HttpStatus.OK;
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode responseNode = mapper.createObjectNode();
 
@@ -182,11 +189,8 @@ public class IssueController
             responseNode.put("message", "Eliminazione issue " + idIssue + " eseguita con successo!");
         }
         else
-        {
-            responseNode.put("code", HttpStatus.NOT_FOUND.toString());
-            responseNode.put("message", "Issue non trovata.");
-            httpStatus = HttpStatus.NOT_FOUND;
-        }
-        return new ResponseEntity<>(responseNode, headers, httpStatus);
+            throw new IssueNotFoundException("L'issue con id " + idIssue + " non è stata trovata.");
+
+        return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }
 }

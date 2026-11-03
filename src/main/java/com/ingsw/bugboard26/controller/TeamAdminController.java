@@ -1,6 +1,7 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.dto.teamadmin.*;
+import com.ingsw.bugboard26.exception.notfound.TeamAdminNotFoundException;
 import com.ingsw.bugboard26.service.teamadmin.TeamAdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +35,14 @@ public class TeamAdminController
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<TeamAdminInfoDto>> listAllTeamAdmin()
+            throws TeamAdminNotFoundException
     {
         logger.info("****** Otteniamo tutti i team admins *******");
 
         List<TeamAdminInfoDto> admins = teamAdminService.selectAll();
 
         if (admins.isEmpty())
-            return new ResponseEntity<List<TeamAdminInfoDto>>(HttpStatus.NOT_FOUND);
+            throw new TeamAdminNotFoundException("Non è stato trovato nessun team admin.");
 
         logger.info("Numero dei record: {}.", admins.size());
 
@@ -49,13 +51,14 @@ public class TeamAdminController
 
     @GetMapping(value = "/{username}",produces = "application/json")
     public ResponseEntity<TeamAdminDto> getAdmin(@PathVariable("username") String username)
+            throws TeamAdminNotFoundException
     {
         logger.info("****** Cerchiamo l'admin *******");
 
         TeamAdminDto admin = teamAdminService.selectByUsername(username);
 
         if (admin == null)
-            return new ResponseEntity<TeamAdminDto>(HttpStatus.NOT_FOUND);
+            throw new TeamAdminNotFoundException("L'admin " + username + " non è stato trovato.");
 
         logger.info("Utente trovato.");
 
@@ -82,27 +85,27 @@ public class TeamAdminController
     public ResponseEntity<TeamAdminDto> changeStatusNotifications(
             @PathVariable("username") String username, @RequestBody TeamAdminDto notifications)
     {
-        logger.info("****** Mandiamo la notifica *******");
+        logger.info("****** Aggiorniamo le notifiche *******");
 
         if(notifications == null)
             return new ResponseEntity<TeamAdminDto>(HttpStatus.NO_CONTENT);
 
         teamAdminService.updateStatusNotifications(username, notifications);
 
-        logger.info("Notifica aggiornata con successo.");
+        logger.info("Notifiche aggiornate con successo.");
 
         return new ResponseEntity<TeamAdminDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{username}")
     public ResponseEntity<?> removeAdmin(@PathVariable("username") String username)
+            throws TeamAdminNotFoundException
     {
-        logger.info("Eliminiamo l'admin con username {}", username);
+        logger.info("****** Eliminiamo l'admin con username {} ******", username);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpStatus httpStatus = HttpStatus.OK;
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode responseNode = mapper.createObjectNode();
 
@@ -112,23 +115,20 @@ public class TeamAdminController
             responseNode.put(MESSAGE, "Eliminazione admin " + username + " eseguita con successo!");
         }
         else
-        {
-            responseNode.put(CODE, HttpStatus.NOT_FOUND.toString());
-            responseNode.put(MESSAGE, "Admin non trovata.");
-            httpStatus = HttpStatus.NOT_FOUND;
-        }
-        return new ResponseEntity<>(responseNode, headers, httpStatus);
+            throw new TeamAdminNotFoundException("Il team admin " + username + " non è stato trovato.");
+
+        return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "notifications/{username}")
     public ResponseEntity<?> removeNotifications(@PathVariable("username") String username)
+            throws TeamAdminNotFoundException
     {
-        logger.info("Eliminiamo le notifiche viste dall'admin con username {}", username);
+        logger.info("****** Eliminiamo le notifiche viste dall'admin con username {} ******", username);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpStatus httpStatus = HttpStatus.OK;
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode responseNode = mapper.createObjectNode();
 
@@ -138,11 +138,8 @@ public class TeamAdminController
             responseNode.put(MESSAGE, "Eliminazione notifiche admin " + username + " eseguita con successo!");
         }
         else
-        {
-            responseNode.put(CODE, HttpStatus.NOT_FOUND.toString());
-            responseNode.put(MESSAGE, "Notifiche non trovate.");
-            httpStatus = HttpStatus.NOT_FOUND;
-        }
-        return new ResponseEntity<>(responseNode, headers, httpStatus);
+            throw new TeamAdminNotFoundException("Il team admin " + username + " non è stato trovato.");
+
+        return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }
 }

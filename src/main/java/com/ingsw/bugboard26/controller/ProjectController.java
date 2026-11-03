@@ -1,6 +1,7 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.dto.project.*;
+import com.ingsw.bugboard26.exception.notfound.ProjectNotFoundException;
 import com.ingsw.bugboard26.service.project.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +32,14 @@ public class ProjectController
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<ProjectDto>> getAllProjects()
+            throws ProjectNotFoundException
     {
         logger.info("****** Otteniamo tutti i progetti *******");
 
         List<ProjectDto> projects = projectService.selectAllProjects();
 
         if (projects.isEmpty())
-            return new ResponseEntity<List<ProjectDto>>(HttpStatus.NO_CONTENT);
+            throw new ProjectNotFoundException("Non è stato trovato nessuno progetto.");
 
         logger.info("Numero dei record: {}.", projects.size());
 
@@ -46,13 +48,14 @@ public class ProjectController
 
     @GetMapping(value = "/{idproject}", produces = "application/json")
     public ResponseEntity<ProjectIssuesDto> getProjectByIdProject(@PathVariable("idproject") int idProject)
+            throws ProjectNotFoundException
     {
         logger.info("****** Cerchiamo il progetto *******");
 
         ProjectIssuesDto project = projectService.selectByIdProject(idProject);
 
         if (project == null)
-            return new ResponseEntity<ProjectIssuesDto>(HttpStatus.NO_CONTENT);
+            throw new ProjectNotFoundException("Il progetto con id " + idProject + " non è stato trovato.");
 
         logger.info("Progetto trovato.");
 
@@ -74,7 +77,7 @@ public class ProjectController
         return new ResponseEntity<ProjectDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/issues/{idProject}")
+    @PutMapping(value = "/issues/{idProject}")
     public ResponseEntity<ProjectIssuesDto> reportIssue(
             @PathVariable("idProject") int idProject, @RequestBody ProjectIssuesDto issue)
     {
@@ -108,13 +111,13 @@ public class ProjectController
 
     @DeleteMapping(value = "/{idProject}")
     public ResponseEntity<?> removeProject(@PathVariable("idProject") int idProject)
+            throws ProjectNotFoundException
     {
-        logger.info("Eliminiamo il progetto con id {}", idProject);
+        logger.info("****** Eliminiamo il progetto con id {} ******", idProject);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpStatus httpStatus = HttpStatus.OK;
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode responseNode = mapper.createObjectNode();
 
@@ -124,11 +127,8 @@ public class ProjectController
             responseNode.put("message", "Eliminazione progetto " + idProject + " eseguita con successo!!");
         }
         else
-        {
-            responseNode.put("code", HttpStatus.NOT_FOUND.toString());
-            responseNode.put("message", "Progetto non trovata.");
-            httpStatus = HttpStatus.NOT_FOUND;
-        }
-        return new ResponseEntity<>(responseNode, headers, httpStatus);
+            throw new ProjectNotFoundException("Il progetto con id " + idProject + " non è stato trovato.");
+
+        return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }
 }

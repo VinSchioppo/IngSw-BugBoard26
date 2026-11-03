@@ -1,4 +1,4 @@
-package com.ingsw.bugboard26.exception.notfoundexception;
+package com.ingsw.bugboard26.exception.notfound;
 
 import lombok.Getter;
 import lombok.Setter;

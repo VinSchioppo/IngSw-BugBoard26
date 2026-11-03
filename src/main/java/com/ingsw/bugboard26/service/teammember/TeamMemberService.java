@@ -1,6 +1,7 @@
 package com.ingsw.bugboard26.service.teammember;
 
 import com.ingsw.bugboard26.dto.teammember.*;
+import com.ingsw.bugboard26.exception.duplicate.UsernameDuplicateException;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface TeamMemberService
     TeamMemberCommentsDto selectCommentsByUsername(String username);
     TeamMemberNotificationsDto selectNotificationsByUsername(String username);
 
-    void insertTeamMembers(List<TeamMemberInfoDto> teamMembers);
+    void insertTeamMembers(List<TeamMemberInfoDto> teamMembers) throws UsernameDuplicateException;
     void insertComments(String username, TeamMemberCommentsDto comments);
     void insertNotifications(String username, TeamMemberNotificationsDto notifications);
 
