@@ -1,7 +1,7 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.dto.project.*;
-import com.ingsw.bugboard26.exception.notfound.ProjectNotFoundException;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.service.project.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +32,14 @@ public class ProjectController
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<ProjectDto>> getAllProjects()
-            throws ProjectNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Otteniamo tutti i progetti *******");
 
         List<ProjectDto> projects = projectService.selectAllProjects();
 
         if (projects.isEmpty())
-            throw new ProjectNotFoundException("Non è stato trovato nessuno progetto.");
+            throw new NotFoundException("Non è stato trovato nessuno progetto.");
 
         logger.info("Numero dei record: {}.", projects.size());
 
@@ -48,14 +48,14 @@ public class ProjectController
 
     @GetMapping(value = "/{idproject}", produces = "application/json")
     public ResponseEntity<ProjectIssuesDto> getProjectByIdProject(@PathVariable("idproject") int idProject)
-            throws ProjectNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Cerchiamo il progetto *******");
 
         ProjectIssuesDto project = projectService.selectByIdProject(idProject);
 
         if (project == null)
-            throw new ProjectNotFoundException("Il progetto con id " + idProject + " non è stato trovato.");
+            throw new NotFoundException("Il progetto con id " + idProject + " non è stato trovato.");
 
         logger.info("Progetto trovato.");
 
@@ -111,7 +111,7 @@ public class ProjectController
 
     @DeleteMapping(value = "/{idProject}")
     public ResponseEntity<?> removeProject(@PathVariable("idProject") int idProject)
-            throws ProjectNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Eliminiamo il progetto con id {} ******", idProject);
 
@@ -127,7 +127,7 @@ public class ProjectController
             responseNode.put("message", "Eliminazione progetto " + idProject + " eseguita con successo!!");
         }
         else
-            throw new ProjectNotFoundException("Il progetto con id " + idProject + " non è stato trovato.");
+            throw new NotFoundException("Il progetto con id " + idProject + " non è stato trovato.");
 
         return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }

@@ -1,8 +1,8 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.dto.teammember.*;
-import com.ingsw.bugboard26.exception.duplicate.UsernameDuplicateException;
-import com.ingsw.bugboard26.exception.notfound.TeamMemberNotFoundException;
+import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.service.teammember.TeamMemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +36,14 @@ public class TeamMemberController
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<TeamMemberInfoDto>> listAllTeamMembers()
-            throws TeamMemberNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Otteniamo tutti i team members *******");
 
         List<TeamMemberInfoDto> members = teamMemberService.selectAll();
 
         if (members.isEmpty())
-            throw new TeamMemberNotFoundException("Non sono stati trovati team member.");
+            throw new NotFoundException("Non sono stati trovati team member.");
 
         logger.info("Numero dei record: {}.", members.size());
 
@@ -52,14 +52,14 @@ public class TeamMemberController
 
     @GetMapping(value = "/{username}",produces = "application/json")
     public ResponseEntity<TeamMemberDto> getUserByUsername(@PathVariable("username") String username)
-            throws TeamMemberNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Cerchiamo l'utente *******");
 
         TeamMemberDto member = teamMemberService.selectByUsername(username);
 
         if (member == null)
-            throw new TeamMemberNotFoundException("L'utente " + username + " non è stato trovato.");
+            throw new NotFoundException("L'utente " + username + " non è stato trovato.");
 
         logger.info("Utente trovato.");
 
@@ -68,14 +68,14 @@ public class TeamMemberController
 
     @GetMapping(value = "/issues/{username}",produces = "application/json")
     public ResponseEntity<TeamMemberIssuesDto> getUserIssuesByUsername(@PathVariable("username") String username)
-            throws TeamMemberNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Cerchiamo le issues dell'utente *******");
 
         TeamMemberIssuesDto member = teamMemberService.selectIssuesByUsername(username);
 
         if (member == null)
-            throw new TeamMemberNotFoundException("L'utente " + username + " non è stato trovato.");
+            throw new NotFoundException("L'utente " + username + " non è stato trovato.");
 
         logger.info("Issues trovate.");
 
@@ -84,14 +84,14 @@ public class TeamMemberController
 
     @GetMapping(value = "/notifications/{username}",produces = "application/json")
     public ResponseEntity<TeamMemberNotificationsDto> getUserNotificationsByUsername(@PathVariable("username") String username)
-            throws TeamMemberNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Cerchiamo le notifiche dell'utente *******");
 
         TeamMemberNotificationsDto member = teamMemberService.selectNotificationsByUsername(username);
 
         if (member == null)
-            throw new TeamMemberNotFoundException("Il nome utente " + username + " è errato.");
+            throw new NotFoundException("Il nome utente " + username + " è errato.");
 
         logger.info("Notifiche trovate.");
 
@@ -100,14 +100,14 @@ public class TeamMemberController
 
     @GetMapping(value = "/comments/{username}",produces = "application/json")
     public ResponseEntity<TeamMemberCommentsDto> getUserCommentsByUsername(@PathVariable("username") String username)
-            throws TeamMemberNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Cerchiamo i commenti dell'utente *******");
 
         TeamMemberCommentsDto member = teamMemberService.selectCommentsByUsername(username);
 
         if (member == null)
-            throw new TeamMemberNotFoundException("Il nome utente " + username + " è errato.");
+            throw new NotFoundException("Il nome utente " + username + " è errato.");
 
         logger.info("Commenti trovati.");
 
@@ -116,7 +116,7 @@ public class TeamMemberController
 
     @PutMapping(value = "/signup")
     public ResponseEntity<List<TeamMemberInfoDto>> signUp(@RequestBody List<TeamMemberInfoDto> teamMembers)
-            throws UsernameDuplicateException
+            throws DuplicateException
     {
         logger.info("****** Registriamo i nuovi utenti *******");
 
@@ -211,7 +211,7 @@ public class TeamMemberController
 
     @DeleteMapping(value = "/{username}")
     public ResponseEntity<?> removeMember(@PathVariable("username") String username)
-            throws TeamMemberNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Eliminiamo l'utente con username {} ******", username);
 
@@ -227,14 +227,14 @@ public class TeamMemberController
             responseNode.put(MESSAGE, "Eliminazione utente " + username + " eseguita con successo!");
         }
         else
-            throw new TeamMemberNotFoundException("L'utente " + username + " non è stato trovato.");
+            throw new NotFoundException("L'utente " + username + " non è stato trovato.");
 
         return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "notifications/{username}")
     public ResponseEntity<?> removeNotifications(@PathVariable("username") String username)
-            throws TeamMemberNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Eliminiamo le notifiche viste dall'utente con username {} ******", username);
 
@@ -250,7 +250,7 @@ public class TeamMemberController
             responseNode.put(MESSAGE, "Eliminazione notifiche utente " + username + " eseguita con successo!");
         }
         else
-            throw new TeamMemberNotFoundException("L'utente " + username + " non è stato trovato.");
+            throw new NotFoundException("L'utente " + username + " non è stato trovato.");
 
         return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }

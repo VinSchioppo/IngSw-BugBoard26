@@ -1,7 +1,7 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.dto.teamadmin.*;
-import com.ingsw.bugboard26.exception.notfound.TeamAdminNotFoundException;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.service.teamadmin.TeamAdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,14 +35,14 @@ public class TeamAdminController
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<TeamAdminInfoDto>> listAllTeamAdmin()
-            throws TeamAdminNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Otteniamo tutti i team admins *******");
 
         List<TeamAdminInfoDto> admins = teamAdminService.selectAll();
 
         if (admins.isEmpty())
-            throw new TeamAdminNotFoundException("Non è stato trovato nessun team admin.");
+            throw new NotFoundException("Non è stato trovato nessun team admin.");
 
         logger.info("Numero dei record: {}.", admins.size());
 
@@ -51,14 +51,14 @@ public class TeamAdminController
 
     @GetMapping(value = "/{username}",produces = "application/json")
     public ResponseEntity<TeamAdminDto> getAdmin(@PathVariable("username") String username)
-            throws TeamAdminNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Cerchiamo l'admin *******");
 
         TeamAdminDto admin = teamAdminService.selectByUsername(username);
 
         if (admin == null)
-            throw new TeamAdminNotFoundException("L'admin " + username + " non è stato trovato.");
+            throw new NotFoundException("L'admin " + username + " non è stato trovato.");
 
         logger.info("Utente trovato.");
 
@@ -99,7 +99,7 @@ public class TeamAdminController
 
     @DeleteMapping(value = "/{username}")
     public ResponseEntity<?> removeAdmin(@PathVariable("username") String username)
-            throws TeamAdminNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Eliminiamo l'admin con username {} ******", username);
 
@@ -115,14 +115,14 @@ public class TeamAdminController
             responseNode.put(MESSAGE, "Eliminazione admin " + username + " eseguita con successo!");
         }
         else
-            throw new TeamAdminNotFoundException("Il team admin " + username + " non è stato trovato.");
+            throw new NotFoundException("Il team admin " + username + " non è stato trovato.");
 
         return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "notifications/{username}")
     public ResponseEntity<?> removeNotifications(@PathVariable("username") String username)
-            throws TeamAdminNotFoundException
+            throws NotFoundException
     {
         logger.info("****** Eliminiamo le notifiche viste dall'admin con username {} ******", username);
 
@@ -138,7 +138,7 @@ public class TeamAdminController
             responseNode.put(MESSAGE, "Eliminazione notifiche admin " + username + " eseguita con successo!");
         }
         else
-            throw new TeamAdminNotFoundException("Il team admin " + username + " non è stato trovato.");
+            throw new NotFoundException("Il team admin " + username + " non è stato trovato.");
 
         return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }

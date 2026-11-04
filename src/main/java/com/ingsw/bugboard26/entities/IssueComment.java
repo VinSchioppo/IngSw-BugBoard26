@@ -15,17 +15,14 @@ import java.time.LocalDate;
 public class IssueComment
 {
     @Id
+    @Column(name = "IDISSUE")
+    @Basic(optional = false)
+    private int idIssue;
+
+    @Id
     @Column(name = "MEMBERUSERNAME")
     @Basic(optional = false)
     private String memberUsername;
-
-    @Id
-    @ManyToOne
-    @MapsId
-    @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
-    @EqualsAndHashCode.Exclude
-    @JsonBackReference
-    private Issue issue;
 
     @Id
     @Column(name = "DESCRIPTION")
@@ -35,6 +32,13 @@ public class IssueComment
     @Column(name = "DATE")
     @Basic(optional = false)
     private LocalDate date;
+
+    @ManyToOne
+    @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
+    @MapsId
+    @EqualsAndHashCode.Exclude
+    @JsonBackReference
+    private Issue issue;
 
     @ManyToOne
     @MapsId

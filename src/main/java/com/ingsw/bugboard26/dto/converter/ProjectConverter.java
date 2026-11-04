@@ -66,7 +66,9 @@ public class ProjectConverter
             tmpProject =  modelMapper.map(projectDto, Project.class);
             tmpProject.getIssues().forEach(
                     source -> {
+                        source.setIdIssue(0);
                         source.setProject(project);
+                        source.setStatus(false);
                         source.getTags().forEach(tag -> tag.setIssue(source));
                         source.getImages().forEach(image -> image.setIssue(source));
                         project.addIssue(source);

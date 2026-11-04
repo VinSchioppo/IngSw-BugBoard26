@@ -1,6 +1,6 @@
 package com.ingsw.bugboard26.dto.project;
 
-import com.ingsw.bugboard26.dto.issue.IssueDto;
+import com.ingsw.bugboard26.dto.issue.IssueInfoDto;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -11,5 +11,5 @@ public class ProjectIssuesDto
 {
     private String title;
 
-    private List<IssueDto> issues = new ArrayList<>();
+    private List<IssueInfoDto> issues = new ArrayList<>();
 }

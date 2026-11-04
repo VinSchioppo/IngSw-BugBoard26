@@ -1,16 +1,20 @@
 package com.ingsw.bugboard26.service.teammember;
 
 import com.ingsw.bugboard26.dto.teammember.*;
-import com.ingsw.bugboard26.exception.duplicate.UsernameDuplicateException;
+import com.ingsw.bugboard26.exception.DuplicateException;
 import com.ingsw.bugboard26.repository.TeamMemberRepository;
 import com.ingsw.bugboard26.dto.converter.TeamMemberConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -64,18 +68,22 @@ public class TeamMemberServiceImpl implements TeamMemberService
 
     @Override
     public void insertTeamMembers(List<TeamMemberInfoDto> teamMembers)
-            throws UsernameDuplicateException
+            throws DuplicateException
     {
-        for(TeamMemberInfoDto teamMemberDto : teamMembers)
-        {
-            if(teamMemberRepository.findByUsername(teamMemberDto.getUsername()) != null)
-                throw new UsernameDuplicateException("L'utente " + teamMemberDto.getUsername() + " esiste già.");
+        List<String> usernames = new ArrayList<>();
+        teamMembers.forEach(source ->
+                usernames.add(source.getUsername()));
 
-            String password = teamMemberDto.getPassword();
-            teamMemberDto.setPassword(passwordEncoder.encode(password));
-            teamMemberRepository.saveAndFlush(
-                    TeamMemberConverter.convertFromInfoDto(teamMemberDto, modelMapper));
-        }
+        Set<String> usernamesSet = new HashSet<>(usernames);
+
+        if(usernames.size() > usernamesSet.size())
+            throw new DuplicateException("Tentativo di inserire due utenti con lo stesso username.");
+
+        if(!teamMemberRepository.findAllByUsernameIn(usernames).isEmpty())
+            throw new DuplicateException("Nome utente duplicato.");
+
+        teamMemberRepository.saveAll(
+                TeamMemberConverter.convertFromInfoDto(teamMembers, modelMapper));
     }
 
     @Override
