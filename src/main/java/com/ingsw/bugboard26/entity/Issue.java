@@ -1,10 +1,11 @@
-package com.ingsw.bugboard26.entities;
+package com.ingsw.bugboard26.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDate;
@@ -77,7 +78,6 @@ public class Issue
     @ToString.Exclude
     @JsonManagedReference
     private List<IssueImage> images = new ArrayList<>();
-
 
     public void addTag(IssueTag tag)
     {

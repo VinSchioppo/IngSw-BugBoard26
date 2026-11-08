@@ -2,13 +2,17 @@ package com.ingsw.bugboard26.dto.issue;
 
 import com.ingsw.bugboard26.dto.issueimage.IssueImageDto;
 import com.ingsw.bugboard26.dto.issuetag.IssueTagDto;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class IssueInfoDto
 {
     private int idIssue;

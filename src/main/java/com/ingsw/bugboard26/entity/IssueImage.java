@@ -1,18 +1,16 @@
-package com.ingsw.bugboard26.entities;
+package com.ingsw.bugboard26.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.ingsw.bugboard26.entities.compositeId.IssueLogId;
+import com.ingsw.bugboard26.entity.compositeId.IssueImageId;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDate;
-
 @Entity
-@IdClass(IssueLogId.class)
-@Table(name = "ISSUELOG")
+@IdClass(IssueImageId.class)
+@Table(name = "ISSUEIMAGE")
 @Data
-public class IssueLog
+public class IssueImage
 {
     @Id
     @ManyToOne
@@ -23,10 +21,10 @@ public class IssueLog
     private Issue issue;
 
     @Id
-    @Column(name = "DESCRIPTION")
-    private String description;
+    @Column(name = "IMAGENAME")
+    private String name;
 
-    @Column(name = "DATE")
+    @Column(name = "IMAGE")
     @Basic(optional = false)
-    private LocalDate date;
+    private byte[] image;
 }

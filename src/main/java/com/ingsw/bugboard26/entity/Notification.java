@@ -1,27 +1,23 @@
-package com.ingsw.bugboard26.entities;
+package com.ingsw.bugboard26.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.ingsw.bugboard26.entities.compositeId.IssueCommentId;
+import com.ingsw.bugboard26.entity.compositeId.NotificationId;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDate;
-
 @Entity
-@IdClass(IssueCommentId.class)
-@Table(name = "ISSUECOMMENT")
+@IdClass(NotificationId.class)
+@Table(name = "NOTIFICATION")
 @Data
-public class IssueComment
+public class Notification
 {
     @Id
-    @Column(name = "IDISSUE")
-    @Basic(optional = false)
-    private int idIssue;
+    @Column(name = "ADMINUSERNAME")
+    private String adminUsername;
 
     @Id
     @Column(name = "MEMBERUSERNAME")
-    @Basic(optional = false)
     private String memberUsername;
 
     @Id
@@ -29,16 +25,15 @@ public class IssueComment
     @Basic(optional = false)
     private String description;
 
-    @Column(name = "DATE")
-    @Basic(optional = false)
-    private LocalDate date;
+    @Column(name = "STATUS")
+    private Boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "IDISSUE", referencedColumnName = "idIssue")
     @MapsId
+    @JoinColumn(name = "ADMINUSERNAME", referencedColumnName = "username")
     @EqualsAndHashCode.Exclude
     @JsonBackReference
-    private Issue issue;
+    private TeamAdmin teamAdmin;
 
     @ManyToOne
     @MapsId

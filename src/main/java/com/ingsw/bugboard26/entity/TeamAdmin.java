@@ -1,4 +1,4 @@
-package com.ingsw.bugboard26.entities;
+package com.ingsw.bugboard26.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;

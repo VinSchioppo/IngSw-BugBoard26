@@ -1,14 +1,14 @@
-package com.ingsw.bugboard26.entities.compositeId;
+package com.ingsw.bugboard26.entity.compositeId;
 
-import com.ingsw.bugboard26.entities.Issue;
+import com.ingsw.bugboard26.entity.Issue;
 import lombok.Data;
 
 @Data
-public class IssueImageId
+public class IssueTagId
 {
     private Issue issue;
 
-    private String name;
+    private String nameTag;
 
     @Override
     public boolean equals(Object obj)

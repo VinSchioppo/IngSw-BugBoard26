@@ -1,7 +1,7 @@
 package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.project.*;
-import com.ingsw.bugboard26.entities.Project;
+import com.ingsw.bugboard26.entity.Project;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
@@ -63,7 +63,7 @@ public class ProjectConverter
 
         if (project != null && projectDto != null)
         {
-            tmpProject =  modelMapper.map(projectDto, Project.class);
+            tmpProject = modelMapper.map(projectDto, Project.class);
             tmpProject.getIssues().forEach(
                     source -> {
                         source.setIdIssue(0);

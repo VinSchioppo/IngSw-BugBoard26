@@ -1,10 +1,11 @@
 package com.ingsw.bugboard26.repository;
 
-import com.ingsw.bugboard26.entities.TeamMember;
+import com.ingsw.bugboard26.entity.TeamMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -12,5 +13,5 @@ import java.util.List;
 public interface TeamMemberRepository extends JpaRepository<TeamMember, String>
 {
     TeamMember findByUsername(String username);
-    List<TeamMember> findAllByUsernameIn(Iterable<String> strings);
+    List<TeamMember> findAllByUsernameIn(Collection<String> username);
 }

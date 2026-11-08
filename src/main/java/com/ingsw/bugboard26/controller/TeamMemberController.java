@@ -35,7 +35,7 @@ public class TeamMemberController
     }
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<List<TeamMemberInfoDto>> listAllTeamMembers()
+    public ResponseEntity<List<TeamMemberInfoDto>> getAllTeamMembers()
             throws NotFoundException
     {
         logger.info("****** Otteniamo tutti i team members *******");

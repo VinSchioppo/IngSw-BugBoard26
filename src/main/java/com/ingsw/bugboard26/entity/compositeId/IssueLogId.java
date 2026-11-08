@@ -1,15 +1,12 @@
-package com.ingsw.bugboard26.entities.compositeId;
+package com.ingsw.bugboard26.entity.compositeId;
 
+import com.ingsw.bugboard26.entity.Issue;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-public class NotificationId implements Serializable
+public class IssueLogId
 {
-    private String adminUsername;
-
-    private String memberUsername;
+    private Issue issue;
 
     private String description;
 

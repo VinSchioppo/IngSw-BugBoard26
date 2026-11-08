@@ -1,6 +1,6 @@
 package com.ingsw.bugboard26.repository;
 
-import com.ingsw.bugboard26.entities.Issue;
+import com.ingsw.bugboard26.entity.Issue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;

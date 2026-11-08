@@ -1,4 +1,4 @@
-package com.ingsw.bugboard26.entities;
+package com.ingsw.bugboard26.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -32,7 +32,6 @@ public class Project
     @ToString.Exclude
     @JsonManagedReference
     private List<Issue> issues = new ArrayList<>();
-
 
     public void addIssue(Issue issue)
     {

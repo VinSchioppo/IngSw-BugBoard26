@@ -1,8 +1,8 @@
 package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.teammember.*;
-import com.ingsw.bugboard26.entities.TeamAdmin;
-import com.ingsw.bugboard26.entities.TeamMember;
+import com.ingsw.bugboard26.entity.TeamAdmin;
+import com.ingsw.bugboard26.entity.TeamMember;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;

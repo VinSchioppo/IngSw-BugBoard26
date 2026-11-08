@@ -1,7 +1,7 @@
 package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.issue.*;
-import com.ingsw.bugboard26.entities.Issue;
+import com.ingsw.bugboard26.entity.Issue;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;

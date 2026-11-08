@@ -1,16 +1,18 @@
-package com.ingsw.bugboard26.entities;
+package com.ingsw.bugboard26.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.ingsw.bugboard26.entities.compositeId.IssueTagId;
+import com.ingsw.bugboard26.entity.compositeId.IssueLogId;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
+
 @Entity
-@IdClass(IssueTagId.class)
-@Table(name = "ISSUETAG")
+@IdClass(IssueLogId.class)
+@Table(name = "ISSUELOG")
 @Data
-public class IssueTag
+public class IssueLog
 {
     @Id
     @ManyToOne
@@ -21,6 +23,10 @@ public class IssueTag
     private Issue issue;
 
     @Id
-    @Column(name = "NAMETAG")
-    private String nameTag;
+    @Column(name = "DESCRIPTION")
+    private String description;
+
+    @Column(name = "DATE")
+    @Basic(optional = false)
+    private LocalDate date;
 }

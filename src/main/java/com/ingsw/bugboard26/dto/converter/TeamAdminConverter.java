@@ -1,7 +1,7 @@
 package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.teamadmin.*;
-import com.ingsw.bugboard26.entities.TeamAdmin;
+import com.ingsw.bugboard26.entity.TeamAdmin;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;

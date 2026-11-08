@@ -1,10 +1,8 @@
-package com.ingsw.bugboard26.entities;
+package com.ingsw.bugboard26.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +52,6 @@ public class TeamMember
     @ToString.Exclude
     @JsonManagedReference
     private List<IssueComment> comments = new ArrayList<>();
-
 
     public void addIssue(Issue issue)
     {

@@ -34,7 +34,7 @@ public class TeamAdminController
     }
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<List<TeamAdminInfoDto>> listAllTeamAdmin()
+    public ResponseEntity<List<TeamAdminInfoDto>> getAllTeamAdmin()
             throws NotFoundException
     {
         logger.info("****** Otteniamo tutti i team admins *******");
