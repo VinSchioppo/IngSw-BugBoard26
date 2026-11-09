@@ -2,6 +2,7 @@ package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.teamadmin.*;
 import com.ingsw.bugboard26.entity.TeamAdmin;
+import com.ingsw.bugboard26.exception.DuplicateException;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
@@ -16,9 +17,10 @@ public class TeamAdminConverter
 
         if (teamAdmin != null)
         {
-            teamAdminDto =  modelMapper.map(teamAdmin, TeamAdminDto.class);
+            teamAdmin.getNotifications().removeIf(notification ->
+                    Boolean.TRUE.equals(notification.getStatus()));
+            teamAdminDto = modelMapper.map(teamAdmin, TeamAdminDto.class);
         }
-
         return teamAdminDto;
     }
 
@@ -26,7 +28,7 @@ public class TeamAdminConverter
     {
         return teamAdmins
                 .stream()
-                .map(source -> convertToDto(source, modelMapper))
+                .map(teamAdmin -> convertToDto(teamAdmin, modelMapper))
                 .toList();
     }
 
@@ -35,10 +37,7 @@ public class TeamAdminConverter
         TeamAdminInfoDto teamAdminDto = null;
 
         if (teamAdmin != null)
-        {
-            teamAdminDto =  modelMapper.map(teamAdmin, TeamAdminInfoDto.class);
-        }
-
+            teamAdminDto = modelMapper.map(teamAdmin, TeamAdminInfoDto.class);
         return teamAdminDto;
     }
 
@@ -46,24 +45,27 @@ public class TeamAdminConverter
     {
         return teamAdmins
                 .stream()
-                .map(source -> convertToInfoDto(source, modelMapper))
+                .map(teamAdmin -> convertToInfoDto(teamAdmin, modelMapper))
                 .toList();
     }
 
 
     public static TeamAdmin convertFromNotificationsDto(
             TeamAdmin teamAdmin, TeamAdminDto teamAdminDto, ModelMapper modelMapper)
+            throws DuplicateException
     {
-        TeamAdmin tmpAdmin = null;
-
         if (teamAdmin != null && teamAdminDto != null)
         {
-            tmpAdmin = modelMapper.map(teamAdminDto, TeamAdmin.class);
+            TeamAdmin tmpAdmin = modelMapper.map(teamAdminDto, TeamAdmin.class);
             tmpAdmin.getNotifications().forEach(
-                    source -> {
-                        source.setAdminUsername(teamAdmin.getUsername());
-                        source.setStatus(false);
-                        teamAdmin.addNotification(source);
+                    notification -> {
+                        notification.setAdminUsername(teamAdmin.getUsername());
+                        notification.setStatus(false);
+
+                        if(teamAdmin.getNotifications().contains(notification))
+                            throw new DuplicateException("Questa notifica è già stata inviata.");
+
+                        teamAdmin.addNotification(notification);
                     });
         }
 

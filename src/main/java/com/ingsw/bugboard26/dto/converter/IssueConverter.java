@@ -17,9 +17,7 @@ public class IssueConverter
         IssueDto issueDto = null;
 
         if (issue != null)
-        {
             issueDto =  modelMapper.map(issue, IssueDto.class);
-        }
 
         return issueDto;
     }
@@ -28,7 +26,7 @@ public class IssueConverter
     {
         return issues
                 .stream()
-                .map(source -> convertToDto(source, modelMapper))
+                .map(issue -> convertToDto(issue, modelMapper))
                 .toList();
     }
 
@@ -37,9 +35,7 @@ public class IssueConverter
         IssueInfoDto issueDto = null;
 
         if (issue != null)
-        {
             issueDto =  modelMapper.map(issue, IssueInfoDto.class);
-        }
 
         return issueDto;
     }
@@ -48,7 +44,7 @@ public class IssueConverter
     {
         return issues
                 .stream()
-                .map(source -> convertToInfoDto(source, modelMapper))
+                .map(issue -> convertToInfoDto(issue, modelMapper))
                 .toList();
     }
 
@@ -57,9 +53,7 @@ public class IssueConverter
         IssueMemberDto issueDto = null;
 
         if (issue != null)
-        {
             issueDto =  modelMapper.map(issue, IssueMemberDto.class);
-        }
 
         return issueDto;
     }
@@ -69,9 +63,7 @@ public class IssueConverter
         IssueLogsDto issueDto = null;
 
         if (issue != null)
-        {
             issueDto =  modelMapper.map(issue, IssueLogsDto.class);
-        }
 
         return issueDto;
     }
@@ -80,7 +72,7 @@ public class IssueConverter
     {
         return issues
                 .stream()
-                .map(source -> convertToLogsDto(source, modelMapper))
+                .map(issue -> convertToLogsDto(issue, modelMapper))
                 .toList();
     }
 
@@ -89,9 +81,7 @@ public class IssueConverter
         IssueCommentsDto issueDto = null;
 
         if (issue != null)
-        {
             issueDto =  modelMapper.map(issue, IssueCommentsDto.class);
-        }
 
         return issueDto;
     }
@@ -100,17 +90,15 @@ public class IssueConverter
     {
         return issues
                 .stream()
-                .map(source -> convertToCommentsDto(source, modelMapper))
+                .map(issue -> convertToCommentsDto(issue, modelMapper))
                 .toList();
     }
 
     public static Issue convertFromMemberDto(Issue issue, IssueMemberDto issueDto, ModelMapper modelMapper)
     {
-        Issue tmpIssue = null;
-
         if(issue != null && issueDto != null)
         {
-            tmpIssue = modelMapper.map(issueDto, Issue.class);
+            Issue tmpIssue = modelMapper.map(issueDto, Issue.class);
             tmpIssue.getTeamMember().addIssue(issue);
             issue.setTeamMember(tmpIssue.getTeamMember());
         }
@@ -120,16 +108,14 @@ public class IssueConverter
 
     public static Issue convertFromLogsDto(Issue issue, IssueLogsDto issueDto, ModelMapper modelMapper)
     {
-        Issue tmpIssue = null;
-
         if(issue != null && issueDto != null)
         {
-            tmpIssue = modelMapper.map(issueDto, Issue.class);
+            Issue tmpIssue = modelMapper.map(issueDto, Issue.class);
             tmpIssue.getIssueLogs().forEach(
-                    source -> {
-                        source.setIssue(issue);
-                        source.setDate(LocalDate.now(ZoneId.systemDefault()));
-                        issue.addLog(source);
+                    issueLog -> {
+                        issueLog.setIssue(issue);
+                        issueLog.setDate(LocalDate.now(ZoneId.systemDefault()));
+                        issue.addLog(issueLog);
                     });
         }
 

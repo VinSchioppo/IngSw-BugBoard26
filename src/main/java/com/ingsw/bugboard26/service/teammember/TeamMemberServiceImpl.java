@@ -2,11 +2,11 @@ package com.ingsw.bugboard26.service.teammember;
 
 import com.ingsw.bugboard26.dto.teammember.*;
 import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.repository.TeamMemberRepository;
 import com.ingsw.bugboard26.dto.converter.TeamMemberConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,10 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = {
+        NotFoundException.class,
+        DuplicateException.class
+})
 public class TeamMemberServiceImpl implements TeamMemberService
 {
     private final TeamMemberRepository teamMemberRepository;
@@ -35,6 +38,7 @@ public class TeamMemberServiceImpl implements TeamMemberService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TeamMemberInfoDto> selectAll()
     {
         return TeamMemberConverter.convertToInfoDto(
@@ -42,6 +46,7 @@ public class TeamMemberServiceImpl implements TeamMemberService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TeamMemberDto selectByUsername(String username)
     {
         return TeamMemberConverter.convertToDto(
@@ -49,18 +54,21 @@ public class TeamMemberServiceImpl implements TeamMemberService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TeamMemberIssuesDto selectIssuesByUsername(String username) {
         return TeamMemberConverter.convertToIssueDto(
                 teamMemberRepository.findByUsername(username), modelMapper);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TeamMemberCommentsDto selectCommentsByUsername(String username) {
         return TeamMemberConverter.convertToCommentsDto(
                 teamMemberRepository.findByUsername(username), modelMapper);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TeamMemberNotificationsDto selectNotificationsByUsername(String username) {
         return TeamMemberConverter.convertToNotificationsDto(
                 teamMemberRepository.findByUsername(username), modelMapper);
@@ -71,8 +79,8 @@ public class TeamMemberServiceImpl implements TeamMemberService
             throws DuplicateException
     {
         List<String> usernames = new ArrayList<>();
-        teamMembers.forEach(source ->
-                usernames.add(source.getUsername()));
+        teamMembers.forEach(teamMember ->
+                usernames.add(teamMember.getUsername()));
 
         Set<String> usernamesSet = new HashSet<>(usernames);
 
@@ -88,6 +96,7 @@ public class TeamMemberServiceImpl implements TeamMemberService
 
     @Override
     public void insertComments(String username, TeamMemberCommentsDto comments)
+            throws NotFoundException, DuplicateException
     {
         teamMemberRepository.saveAndFlush(
                 TeamMemberConverter.convertFromCommentsDto(
@@ -96,6 +105,7 @@ public class TeamMemberServiceImpl implements TeamMemberService
 
     @Override
     public void insertNotifications(String username, TeamMemberNotificationsDto notifications)
+            throws NotFoundException, DuplicateException
     {
         teamMemberRepository.saveAndFlush(
                 TeamMemberConverter.convertFromNotificationsDto(
@@ -111,11 +121,11 @@ public class TeamMemberServiceImpl implements TeamMemberService
     }
 
     @Override
-    public void updateToAdmin(List<TeamMemberInfoDto> teamMembersDto)
+    public void updateToAdmin(List<TeamMemberInfoDto> teamMembersDto) throws NotFoundException
     {
-        teamMembersDto.forEach( source ->
+        teamMembersDto.forEach( teamMember ->
                 teamMemberRepository.saveAndFlush(
-                        TeamMemberConverter.convertToAdmin(teamMemberRepository.findByUsername(source.getUsername()))));
+                        TeamMemberConverter.convertToAdmin(teamMemberRepository.findByUsername(teamMember.getUsername()))));
     }
 
     @Override
@@ -135,24 +145,25 @@ public class TeamMemberServiceImpl implements TeamMemberService
     }
 
     @Override
-    public boolean deleteMember(String username)
+    public void deleteMember(String username)
+            throws NotFoundException
     {
         var teamMember = teamMemberRepository.findByUsername(username);
         if(teamMember == null)
-            return false;
+            throw new NotFoundException("L'utente " + username + " non è stato trovato.");
         teamMemberRepository.delete(teamMember);
-        return true;
     }
 
     @Override
-    public boolean deleteNotifications(String username)
+    public void deleteNotifications(String username)
+            throws NotFoundException
     {
         var teamMember = teamMemberRepository.findByUsername(username);
         if(teamMember == null)
-            return false;
+            throw new NotFoundException("L'utente " + username + " non è stato trovato.");
+
         teamMember.getNotifications().removeIf(
-                source -> Boolean.TRUE.equals(source.getStatus()));
+                notification -> Boolean.TRUE.equals(notification.getStatus()));
         teamMemberRepository.saveAndFlush(teamMember);
-        return true;
     }
 }

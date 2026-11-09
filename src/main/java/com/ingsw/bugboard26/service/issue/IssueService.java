@@ -1,6 +1,7 @@
 package com.ingsw.bugboard26.service.issue;
 
 import com.ingsw.bugboard26.dto.issue.*;
+import com.ingsw.bugboard26.exception.NotFoundException;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface IssueService
 
     void updateStatus(int idIssue, IssueInfoDto issueInfoDto);
 
-    boolean deleteIssue(int idIssue);
+    void deleteIssue(int idIssue) throws NotFoundException;
 
     String adviceMember();
 }

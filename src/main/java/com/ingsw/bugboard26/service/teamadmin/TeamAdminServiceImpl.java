@@ -1,6 +1,8 @@
 package com.ingsw.bugboard26.service.teamadmin;
 
 import com.ingsw.bugboard26.dto.teamadmin.*;
+import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.repository.TeamAdminRepository;
 import com.ingsw.bugboard26.dto.converter.TeamAdminConverter;
 import org.modelmapper.ModelMapper;
@@ -25,12 +27,14 @@ public class TeamAdminServiceImpl implements TeamAdminService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TeamAdminInfoDto> selectAll()
     {
         return TeamAdminConverter.convertToInfoDto(teamAdminRepository.findAll(), modelMapper);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TeamAdminDto selectByUsername(String username)
     {
         return TeamAdminConverter.convertToDto(
@@ -39,6 +43,7 @@ public class TeamAdminServiceImpl implements TeamAdminService
 
     @Override
     public void insertNotifications(String username, TeamAdminDto notifications)
+            throws DuplicateException
     {
         teamAdminRepository.saveAndFlush(
                 TeamAdminConverter.convertFromNotificationsDto(
@@ -62,23 +67,24 @@ public class TeamAdminServiceImpl implements TeamAdminService
     }
 
     @Override
-    public boolean deleteAdmin(String username)
+    public void deleteAdmin(String username)
+            throws NotFoundException
     {
         var teamAdmin = teamAdminRepository.findByAccountUsername(username);
         if(teamAdmin == null)
-            return false;
+            throw new NotFoundException("Il team admin " + username + " non è stato trovato.");
         teamAdminRepository.delete(teamAdmin);
-        return true;
     }
 
-    public boolean deleteNotifications(String username)
+    @Override
+    public void deleteNotifications(String username)
+            throws NotFoundException
     {
         var teamAdmin = teamAdminRepository.findByAccountUsername(username);
         if(teamAdmin == null)
-            return false;
+            throw new NotFoundException("Il team admin " + username + " non è stato trovato.");
         teamAdmin.getNotifications().removeIf(
-                source -> Boolean.TRUE.equals(source.getStatus()));
+                notification -> Boolean.TRUE.equals(notification.getStatus()));
         teamAdminRepository.saveAndFlush(teamAdmin);
-        return true;
     }
 }

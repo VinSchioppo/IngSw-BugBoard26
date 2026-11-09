@@ -117,7 +117,7 @@ public class IssueController
     {
         logger.info("****** Assegnamo la issue *******");
 
-        if(member == null)
+        if(member == null || member.getTeamMember() == null)
             return new ResponseEntity<IssueMemberDto>(HttpStatus.NO_CONTENT);
 
         issueService.insertMember(idIssue, member);
@@ -133,7 +133,7 @@ public class IssueController
     {
         logger.info("****** Salviamo i log della issue *******");
 
-        if(logs == null)
+        if(logs == null || logs.getIssueLogs() == null || logs.getIssueLogs().isEmpty())
             return new ResponseEntity<IssueLogsDto>(HttpStatus.NO_CONTENT);
 
         issueService.insertLogs(idIssue, logs);
@@ -145,14 +145,14 @@ public class IssueController
 
     @PostMapping(value = "/status/{idIssue}")
     public ResponseEntity<IssueInfoDto> changeStatus(
-            @PathVariable("idIssue") int idIssue, @RequestBody IssueInfoDto logs)
+            @PathVariable("idIssue") int idIssue, @RequestBody IssueInfoDto issue)
     {
         logger.info("****** Aggiorniamo lo stato dell'issue *******");
 
-        if(logs == null)
+        if(issue == null)
             return new ResponseEntity<IssueInfoDto>(HttpStatus.NO_CONTENT);
 
-        issueService.updateStatus(idIssue, logs);
+        issueService.updateStatus(idIssue, issue);
 
         logger.info("Aggiornamento eseguito con successo.");
 
@@ -160,7 +160,7 @@ public class IssueController
     }
 
     @DeleteMapping(value = "/{idIssue}")
-    public ResponseEntity<?> removeIssue(@PathVariable("idIssue") int idIssue)
+    public ResponseEntity<Object> removeIssue(@PathVariable("idIssue") int idIssue)
             throws NotFoundException
     {
         logger.info("****** Eliminiamo l'issue con id {} ******", idIssue);
@@ -171,13 +171,10 @@ public class IssueController
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode responseNode = mapper.createObjectNode();
 
-        if(issueService.deleteIssue(idIssue))
-        {
-            responseNode.put("code", HttpStatus.OK.toString());
-            responseNode.put("message", "Eliminazione issue " + idIssue + " eseguita con successo!");
-        }
-        else
-            throw new NotFoundException("L'issue con id " + idIssue + " non è stata trovata.");
+        issueService.deleteIssue(idIssue);
+
+        responseNode.put("code", HttpStatus.OK.toString());
+        responseNode.put("message", "Eliminazione issue " + idIssue + " eseguita con successo!");
 
         return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }

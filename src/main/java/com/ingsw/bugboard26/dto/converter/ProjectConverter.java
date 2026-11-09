@@ -15,9 +15,7 @@ public class ProjectConverter
         ProjectDto projectDto = null;
 
         if (project != null)
-        {
             projectDto =  modelMapper.map(project, ProjectDto.class);
-        }
 
         return projectDto;
     }
@@ -26,7 +24,7 @@ public class ProjectConverter
     {
         return projects
                 .stream()
-                .map(source -> convertToDto(source, modelMapper))
+                .map(project -> convertToDto(project, modelMapper))
                 .toList();
     }
 
@@ -35,9 +33,7 @@ public class ProjectConverter
         ProjectIssuesDto projectDto = null;
 
         if (project != null)
-        {
             projectDto =  modelMapper.map(project, ProjectIssuesDto.class);
-        }
 
         return projectDto;
     }
@@ -46,7 +42,7 @@ public class ProjectConverter
     {
         return projects
                 .stream()
-                .map(source -> convertToIssuesDto(source, modelMapper))
+                .map(project -> convertToIssuesDto(project, modelMapper))
                 .toList();
     }
 
@@ -59,19 +55,17 @@ public class ProjectConverter
 
     public static Project convertFromIssuesDto(Project project, ProjectIssuesDto projectDto, ModelMapper modelMapper)
     {
-        Project tmpProject = null;
-
         if (project != null && projectDto != null)
         {
-            tmpProject = modelMapper.map(projectDto, Project.class);
+            Project tmpProject = modelMapper.map(projectDto, Project.class);
             tmpProject.getIssues().forEach(
-                    source -> {
-                        source.setIdIssue(0);
-                        source.setProject(project);
-                        source.setStatus(false);
-                        source.getTags().forEach(tag -> tag.setIssue(source));
-                        source.getImages().forEach(image -> image.setIssue(source));
-                        project.addIssue(source);
+                    issue -> {
+                        issue.setIdIssue(0);
+                        issue.setProject(project);
+                        issue.setStatus(false);
+                        issue.getTags().forEach(tag -> tag.setIssue(issue));
+                        issue.getImages().forEach(image -> image.setIssue(issue));
+                        project.addIssue(issue);
                     });
         }
 

@@ -1,6 +1,7 @@
 package com.ingsw.bugboard26.service.issue;
 
 import com.ingsw.bugboard26.dto.issue.*;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.repository.IssueRepository;
 import com.ingsw.bugboard26.dto.converter.IssueConverter;
 import org.modelmapper.ModelMapper;
@@ -25,6 +26,7 @@ public class IssueServiceImpl implements IssueService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public IssueDto selectByIdIssue(int idIssue)
     {
 
@@ -33,18 +35,21 @@ public class IssueServiceImpl implements IssueService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public IssueCommentsDto selectCommentsByIdIssue(int idIssue) {
         return IssueConverter.convertToCommentsDto(
                 issueRepository.findByIdIssue(idIssue), modelMapper);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public IssueLogsDto selectLogsByIdIssue(int idIssue) {
         return IssueConverter.convertToLogsDto(
                 issueRepository.findByIdIssue(idIssue), modelMapper);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<IssueInfoDto> selectByMemberUsername(String username)
     {
         return IssueConverter.convertToInfoDto(
@@ -52,6 +57,7 @@ public class IssueServiceImpl implements IssueService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<IssueInfoDto> selectByTag(String nameTag)
     {
         return IssueConverter.convertToInfoDto(
@@ -59,6 +65,7 @@ public class IssueServiceImpl implements IssueService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<IssueInfoDto> selectByPriority(int priority)
     {
         return IssueConverter.convertToInfoDto(
@@ -89,13 +96,12 @@ public class IssueServiceImpl implements IssueService
     }
 
     @Override
-    public boolean deleteIssue(int idIssue)
+    public void deleteIssue(int idIssue) throws NotFoundException
     {
         var issue = issueRepository.findByIdIssue(idIssue);
         if(issue == null)
-            return false;
+            throw new NotFoundException("L'issue con id " + idIssue + " non è stata trovata.");
         issueRepository.delete(issue);
-        return true;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.ingsw.bugboard26.service.project;
 
 import com.ingsw.bugboard26.dto.project.*;
+import com.ingsw.bugboard26.exception.NotFoundException;
 
 import java.util.List;
 
@@ -14,5 +15,5 @@ public interface ProjectService
 
     void updateProject(int idProject, ProjectDto projectDto);
 
-    boolean deleteProject(int idProject);
+    void deleteProject(int idProject) throws NotFoundException;
 }

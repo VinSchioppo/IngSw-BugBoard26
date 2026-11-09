@@ -3,6 +3,8 @@ package com.ingsw.bugboard26.dto.converter;
 import com.ingsw.bugboard26.dto.teammember.*;
 import com.ingsw.bugboard26.entity.TeamAdmin;
 import com.ingsw.bugboard26.entity.TeamMember;
+import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
@@ -19,9 +21,7 @@ public class TeamMemberConverter
         TeamMemberDto teamMemberDto = null;
 
         if (teamMember != null)
-        {
             teamMemberDto =  modelMapper.map(teamMember, TeamMemberDto.class);
-        }
 
         return teamMemberDto;
     }
@@ -30,7 +30,7 @@ public class TeamMemberConverter
     {
         return teamMembers
                 .stream()
-                .map(source -> convertToDto(source, modelMapper))
+                .map(teamMember -> convertToDto(teamMember, modelMapper))
                 .toList();
     }
 
@@ -51,7 +51,7 @@ public class TeamMemberConverter
     {
         return teamMembers
                 .stream()
-                .map(source -> convertToInfoDto(source, modelMapper))
+                .map(teamMember -> convertToInfoDto(teamMember, modelMapper))
                 .toList();
     }
 
@@ -60,9 +60,7 @@ public class TeamMemberConverter
         TeamMemberCommentsDto teamMemberDto = null;
 
         if (teamMember != null)
-        {
             teamMemberDto =  modelMapper.map(teamMember, TeamMemberCommentsDto.class);
-        }
 
         return teamMemberDto;
     }
@@ -71,7 +69,7 @@ public class TeamMemberConverter
     {
         return teamMembers
                 .stream()
-                .map(source -> convertToCommentsDto(source, modelMapper))
+                .map(teamMember -> convertToCommentsDto(teamMember, modelMapper))
                 .toList();
     }
 
@@ -80,9 +78,7 @@ public class TeamMemberConverter
         TeamMemberIssuesDto teamMemberDto = null;
 
         if (teamMember != null)
-        {
             teamMemberDto =  modelMapper.map(teamMember, TeamMemberIssuesDto.class);
-        }
 
         return teamMemberDto;
     }
@@ -91,7 +87,7 @@ public class TeamMemberConverter
     {
         return teamMembers
                 .stream()
-                .map(source -> convertToIssueDto(source, modelMapper))
+                .map(teamMember -> convertToIssueDto(teamMember, modelMapper))
                 .toList();
     }
 
@@ -101,9 +97,10 @@ public class TeamMemberConverter
 
         if (teamMember != null)
         {
-            teamMemberDto =  modelMapper.map(teamMember, TeamMemberNotificationsDto.class);
+            teamMember.getNotifications().removeIf(notification ->
+                    Boolean.TRUE.equals(notification.getStatus()));
+            teamMemberDto = modelMapper.map(teamMember, TeamMemberNotificationsDto.class);
         }
-
         return teamMemberDto;
     }
 
@@ -111,7 +108,7 @@ public class TeamMemberConverter
     {
         return teamMembers
                 .stream()
-                .map(source -> convertToNotificationsDto(source, modelMapper))
+                .map(teamMember -> convertToNotificationsDto(teamMember, modelMapper))
                 .toList();
     }
 
@@ -141,10 +138,10 @@ public class TeamMemberConverter
         if(teamMembersDto != null)
         {
             teamMembersDto.forEach(
-                    source -> {
-                        TeamMember teamMember = modelMapper.map(source, TeamMember.class);
-                        teamMember.setPassword(source.getPassword());
-                        if(Boolean.TRUE.equals(source.getIsAdmin()))
+                    teamMemberDto -> {
+                        TeamMember teamMember = modelMapper.map(teamMemberDto, TeamMember.class);
+                        teamMember.setPassword(teamMemberDto.getPassword());
+                        if(Boolean.TRUE.equals(teamMemberDto.getIsAdmin()))
                         {
                             teamMember.setAdminAccount(new TeamAdmin());
                             teamMember.getAdminAccount().setAccount(teamMember);
@@ -159,17 +156,22 @@ public class TeamMemberConverter
 
     public static TeamMember convertFromCommentsDto(
             TeamMember teamMember, TeamMemberCommentsDto teamMemberDto, ModelMapper modelMapper)
+            throws NotFoundException, DuplicateException
     {
-        TeamMember tmpMember = null;
+        if(teamMember == null)
+            throw new NotFoundException("Utente non trovato.");
 
-        if (teamMember != null && teamMemberDto != null)
+        if (teamMemberDto != null)
         {
-            tmpMember =  modelMapper.map(teamMemberDto, TeamMember.class);
+            TeamMember tmpMember =  modelMapper.map(teamMemberDto, TeamMember.class);
             tmpMember.getComments().forEach(
-                    source -> {
-                        source.setMemberUsername(teamMember.getUsername());
-                        source.setDate(LocalDate.now(ZoneId.systemDefault()));
-                        teamMember.addComment(source);
+                    issueComment -> {
+                        issueComment.setMemberUsername(teamMember.getUsername());
+                        issueComment.setDate(LocalDate.now(ZoneId.systemDefault()));
+
+                        if(teamMember.getComments().contains(issueComment))
+                            throw new DuplicateException("Questo commento è già stato postato.");
+                        teamMember.addComment(issueComment);
                     });
         }
 
@@ -178,17 +180,23 @@ public class TeamMemberConverter
 
     public static TeamMember convertFromNotificationsDto(
             TeamMember teamMember, TeamMemberNotificationsDto teamMemberDto, ModelMapper modelMapper)
+            throws NotFoundException, DuplicateException
     {
-        TeamMember tmpMember = null;
+        if(teamMember == null)
+            throw new NotFoundException("Utente non trovato.");
 
-        if (teamMember != null && teamMemberDto != null)
+        if (teamMemberDto != null)
         {
-            tmpMember =  modelMapper.map(teamMemberDto, TeamMember.class);
+            TeamMember tmpMember =  modelMapper.map(teamMemberDto, TeamMember.class);
             tmpMember.getNotifications().forEach(
-                    source -> {
-                        source.setMemberUsername(teamMember.getUsername());
-                        source.setStatus(false);
-                        teamMember.addNotification(source);
+                    notification -> {
+                        notification.setMemberUsername(teamMember.getUsername());
+                        notification.setStatus(false);
+
+                        if(teamMember.getNotifications().contains(notification))
+                            throw new DuplicateException("Questa notifica è già stata inviata.");
+
+                        teamMember.addNotification(notification);
                     });
         }
 
@@ -196,13 +204,14 @@ public class TeamMemberConverter
     }
 
     public static TeamMember convertToAdmin(TeamMember teamMember)
+            throws NotFoundException
     {
-        if (teamMember != null)
-        {
-            teamMember.setAdminAccount(new TeamAdmin());
-            teamMember.getAdminAccount().setAccount(teamMember);
-            teamMember.getAdminAccount().setUsername(teamMember.getUsername());
-        }
+        if (teamMember == null)
+            throw new NotFoundException("Utente non trovato.");
+
+        teamMember.setAdminAccount(new TeamAdmin());
+        teamMember.getAdminAccount().setAccount(teamMember);
+        teamMember.getAdminAccount().setUsername(teamMember.getUsername());
 
         return teamMember;
     }

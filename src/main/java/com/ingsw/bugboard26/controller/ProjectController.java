@@ -83,7 +83,7 @@ public class ProjectController
     {
         logger.info("****** Segnaliamo una nuova issue *******");
 
-        if(issue == null)
+        if(issue == null || issue.getIssues() == null || issue.getIssues().isEmpty())
             return new ResponseEntity<ProjectIssuesDto>(HttpStatus.NO_CONTENT);
 
         projectService.insertIssues(idProject, issue);
@@ -110,7 +110,7 @@ public class ProjectController
     }
 
     @DeleteMapping(value = "/{idProject}")
-    public ResponseEntity<?> removeProject(@PathVariable("idProject") int idProject)
+    public ResponseEntity<Object> removeProject(@PathVariable("idProject") int idProject)
             throws NotFoundException
     {
         logger.info("****** Eliminiamo il progetto con id {} ******", idProject);
@@ -121,13 +121,10 @@ public class ProjectController
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode responseNode = mapper.createObjectNode();
 
-        if(projectService.deleteProject(idProject))
-        {
-            responseNode.put("code", HttpStatus.OK.toString());
-            responseNode.put("message", "Eliminazione progetto " + idProject + " eseguita con successo!!");
-        }
-        else
-            throw new NotFoundException("Il progetto con id " + idProject + " non è stato trovato.");
+        projectService.deleteProject(idProject);
+
+        responseNode.put("code", HttpStatus.OK.toString());
+        responseNode.put("message", "Eliminazione progetto " + idProject + " eseguita con successo!!");
 
         return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }

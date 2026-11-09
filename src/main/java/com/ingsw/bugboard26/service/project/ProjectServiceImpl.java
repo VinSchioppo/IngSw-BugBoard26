@@ -1,6 +1,7 @@
 package com.ingsw.bugboard26.service.project;
 
 import com.ingsw.bugboard26.dto.project.*;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.repository.ProjectRepository;
 import com.ingsw.bugboard26.dto.converter.ProjectConverter;
 import org.modelmapper.ModelMapper;
@@ -25,12 +26,14 @@ public class ProjectServiceImpl implements ProjectService
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProjectDto> selectAllProjects()
     {
         return ProjectConverter.convertToDto(projectRepository.findAll(), modelMapper);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProjectIssuesDto selectByIdProject(int idProject)
     {
         return ProjectConverter.convertToIssuesDto(
@@ -65,12 +68,11 @@ public class ProjectServiceImpl implements ProjectService
     }
 
     @Override
-    public boolean deleteProject(int idProject)
+    public void deleteProject(int idProject) throws NotFoundException
     {
         var project = projectRepository.findByIdProject(idProject);
         if(project == null)
-            return false;
+            throw new NotFoundException("Il progetto con id " + idProject + " non è stato trovato.");
         projectRepository.delete(project);
-        return true;
     }
 }

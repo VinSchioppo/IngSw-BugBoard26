@@ -71,7 +71,8 @@ public class TeamAdminController
     {
         logger.info("****** Mandiamo la notifica *******");
 
-        if(notification == null)
+        if(notification == null || notification.getNotifications() == null ||
+                notification.getNotifications().isEmpty())
             return new ResponseEntity<TeamAdminDto>(HttpStatus.NO_CONTENT);
 
         teamAdminService.insertNotifications(username, notification);
@@ -87,19 +88,19 @@ public class TeamAdminController
     {
         logger.info("****** Aggiorniamo le notifiche *******");
 
-        if(notifications == null)
+        if(notifications == null || notifications.getNotifications() == null
+                || notifications.getNotifications().isEmpty())
             return new ResponseEntity<TeamAdminDto>(HttpStatus.NO_CONTENT);
 
         teamAdminService.updateStatusNotifications(username, notifications);
 
         logger.info("Notifiche aggiornate con successo.");
 
-        return new ResponseEntity<TeamAdminDto>(new HttpHeaders(), HttpStatus.CREATED);
+        return new ResponseEntity<TeamAdminDto>(new HttpHeaders(), HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping(value = "/{username}")
-    public ResponseEntity<?> removeAdmin(@PathVariable("username") String username)
-            throws NotFoundException
+    public ResponseEntity<Object> removeAdmin(@PathVariable("username") String username)
     {
         logger.info("****** Eliminiamo l'admin con username {} ******", username);
 
@@ -109,20 +110,16 @@ public class TeamAdminController
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode responseNode = mapper.createObjectNode();
 
-        if(teamAdminService.deleteAdmin(username))
-        {
-            responseNode.put(CODE, HttpStatus.OK.toString());
-            responseNode.put(MESSAGE, "Eliminazione admin " + username + " eseguita con successo!");
-        }
-        else
-            throw new NotFoundException("Il team admin " + username + " non è stato trovato.");
+        teamAdminService.deleteAdmin(username);
+
+        responseNode.put(CODE, HttpStatus.OK.toString());
+        responseNode.put(MESSAGE, "Eliminazione admin " + username + " eseguita con successo!");
 
         return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "notifications/{username}")
-    public ResponseEntity<?> removeNotifications(@PathVariable("username") String username)
-            throws NotFoundException
+    public ResponseEntity<Object> removeNotifications(@PathVariable("username") String username)
     {
         logger.info("****** Eliminiamo le notifiche viste dall'admin con username {} ******", username);
 
@@ -132,13 +129,10 @@ public class TeamAdminController
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode responseNode = mapper.createObjectNode();
 
-        if(teamAdminService.deleteNotifications(username))
-        {
-            responseNode.put(CODE, HttpStatus.OK.toString());
-            responseNode.put(MESSAGE, "Eliminazione notifiche admin " + username + " eseguita con successo!");
-        }
-        else
-            throw new NotFoundException("Il team admin " + username + " non è stato trovato.");
+        teamAdminService.deleteNotifications(username);
+
+        responseNode.put(CODE, HttpStatus.OK.toString());
+        responseNode.put(MESSAGE, "Eliminazione notifiche admin " + username + " eseguita con successo!");
 
         return new ResponseEntity<>(responseNode, headers, HttpStatus.OK);
     }
