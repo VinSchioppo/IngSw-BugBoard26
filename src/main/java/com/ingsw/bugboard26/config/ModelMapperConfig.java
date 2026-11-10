@@ -1,10 +1,8 @@
 package com.ingsw.bugboard26.config;
 
 import com.ingsw.bugboard26.dto.issue.IssueInfoDto;
-import com.ingsw.bugboard26.dto.project.ProjectIssuesDto;
 import com.ingsw.bugboard26.dto.teammember.TeamMemberInfoDto;
 import com.ingsw.bugboard26.entity.Issue;
-import com.ingsw.bugboard26.entity.Project;
 import com.ingsw.bugboard26.entity.TeamMember;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

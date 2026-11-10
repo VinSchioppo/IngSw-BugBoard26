@@ -1,8 +1,12 @@
 package com.ingsw.bugboard26.dto.issuetag;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class IssueTagDto
 {
     private String nameTag;

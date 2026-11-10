@@ -29,4 +29,15 @@ public class RestExceptionHandler
 
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(MissingFieldsException.class)
+    public ResponseEntity<ErrorResponse> missingFieldsExceptionHandler(RuntimeException ex)
+    {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        errorResponse.setCode(HttpStatus.NO_CONTENT.value());
+        errorResponse.setMessage(ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NO_CONTENT);
+    }
 }

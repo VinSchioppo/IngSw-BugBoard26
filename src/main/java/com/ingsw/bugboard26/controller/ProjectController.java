@@ -38,24 +38,18 @@ public class ProjectController
 
         List<ProjectDto> projects = projectService.selectAllProjects();
 
-        if (projects.isEmpty())
-            throw new NotFoundException("Non è stato trovato nessuno progetto.");
-
         logger.info("Numero dei record: {}.", projects.size());
 
         return new ResponseEntity<List<ProjectDto>>(projects, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{idproject}", produces = "application/json")
-    public ResponseEntity<ProjectIssuesDto> getProjectByIdProject(@PathVariable("idproject") int idProject)
+    public ResponseEntity<ProjectIssuesDto> getProject(@PathVariable("idproject") int idProject)
             throws NotFoundException
     {
         logger.info("****** Cerchiamo il progetto *******");
 
         ProjectIssuesDto project = projectService.selectByIdProject(idProject);
-
-        if (project == null)
-            throw new NotFoundException("Il progetto con id " + idProject + " non è stato trovato.");
 
         logger.info("Progetto trovato.");
 
@@ -66,9 +60,6 @@ public class ProjectController
     public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto project)
     {
         logger.info("****** Creiamo un nuovo progetto *******");
-
-        if(project == null)
-            return new ResponseEntity<ProjectDto>(HttpStatus.NO_CONTENT);
 
         projectService.insertProject(project);
 
@@ -83,9 +74,6 @@ public class ProjectController
     {
         logger.info("****** Segnaliamo una nuova issue *******");
 
-        if(issue == null || issue.getIssues() == null || issue.getIssues().isEmpty())
-            return new ResponseEntity<ProjectIssuesDto>(HttpStatus.NO_CONTENT);
-
         projectService.insertIssues(idProject, issue);
 
         logger.info("Issue segnalata con successo.");
@@ -98,9 +86,6 @@ public class ProjectController
             @PathVariable("idProject") int idProject, @RequestBody ProjectDto projectDto)
     {
         logger.info("****** Aggiorniamo le informazioni del progetto *******");
-
-        if(projectDto == null)
-            return new ResponseEntity<ProjectDto>(HttpStatus.NO_CONTENT);
 
         projectService.updateProject(idProject, projectDto);
 

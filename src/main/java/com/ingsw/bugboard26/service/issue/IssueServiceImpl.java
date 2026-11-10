@@ -1,6 +1,8 @@
 package com.ingsw.bugboard26.service.issue;
 
 import com.ingsw.bugboard26.dto.issue.*;
+import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.MissingFieldsException;
 import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.repository.IssueRepository;
 import com.ingsw.bugboard26.dto.converter.IssueConverter;
@@ -12,7 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = {
+        NotFoundException.class,
+        DuplicateException.class,
+        MissingFieldsException.class,
+})
 public class IssueServiceImpl implements IssueService
 {
     private final IssueRepository issueRepository;
@@ -74,7 +80,14 @@ public class IssueServiceImpl implements IssueService
 
     @Override
     public void insertMember(int idIssue, IssueMemberDto teamMember)
+            throws MissingFieldsException, NotFoundException
     {
+        if(teamMember == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(teamMember.getTeamMember() == null || teamMember.getTeamMember().getUsername() == null)
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
         issueRepository.saveAndFlush(
                 IssueConverter.convertFromMemberDto(
                         issueRepository.findByIdIssue(idIssue), teamMember, modelMapper));
@@ -82,25 +95,47 @@ public class IssueServiceImpl implements IssueService
 
     @Override
     public void insertLogs(int idIssue, IssueLogsDto logs)
+            throws MissingFieldsException, NotFoundException, DuplicateException
     {
+        if(logs == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(logs.getIssueLogs() == null || logs.getIssueLogs().isEmpty())
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
         issueRepository.saveAndFlush(
                 IssueConverter.convertFromLogsDto(
                         issueRepository.findByIdIssue(idIssue), logs, modelMapper));
     }
 
     @Override
-    public void updateStatus(int idIssue, IssueInfoDto issueInfoDto) {
-        var tmpIssue = issueRepository.findByIdIssue(idIssue);
-        tmpIssue.setStatus(issueInfoDto.getStatus());
-        issueRepository.saveAndFlush(tmpIssue);
+    public void updateStatus(int idIssue, IssueInfoDto issueInfoDto)
+            throws MissingFieldsException, NotFoundException
+    {
+        if(issueInfoDto == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(issueInfoDto.getStatus() == null)
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
+        var issue = issueRepository.findByIdIssue(idIssue);
+
+        if(issue == null)
+            throw new NotFoundException("Issue non trovata.");
+
+        issue.setStatus(issueInfoDto.getStatus());
+        issueRepository.saveAndFlush(issue);
     }
 
     @Override
-    public void deleteIssue(int idIssue) throws NotFoundException
+    public void deleteIssue(int idIssue)
+            throws NotFoundException
     {
         var issue = issueRepository.findByIdIssue(idIssue);
+
         if(issue == null)
-            throw new NotFoundException("L'issue con id " + idIssue + " non è stata trovata.");
+            throw new NotFoundException("Issue non trovata.");
+
         issueRepository.delete(issue);
     }
 

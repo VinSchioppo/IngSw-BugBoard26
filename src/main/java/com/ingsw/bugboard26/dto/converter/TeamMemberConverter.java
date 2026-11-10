@@ -116,16 +116,13 @@ public class TeamMemberConverter
     {
         TeamMember teamMember = null;
 
-        if(teamMemberDto != null)
+        teamMember = modelMapper.map(teamMemberDto, TeamMember.class);
+        teamMember.setPassword(teamMemberDto.getPassword());
+        if(Boolean.TRUE.equals(teamMemberDto.getIsAdmin()))
         {
-            teamMember = modelMapper.map(teamMemberDto, TeamMember.class);
-            teamMember.setPassword(teamMemberDto.getPassword());
-            if(Boolean.TRUE.equals(teamMemberDto.getIsAdmin()))
-            {
-                teamMember.setAdminAccount(new TeamAdmin());
-                teamMember.getAdminAccount().setAccount(teamMember);
-                teamMember.getAdminAccount().setUsername(teamMember.getUsername());
-            }
+            teamMember.setAdminAccount(new TeamAdmin());
+            teamMember.getAdminAccount().setAccount(teamMember);
+            teamMember.getAdminAccount().setUsername(teamMember.getUsername());
         }
 
         return teamMember;
@@ -135,21 +132,18 @@ public class TeamMemberConverter
     {
         List<TeamMember> teamMembers = new ArrayList<>();
 
-        if(teamMembersDto != null)
-        {
-            teamMembersDto.forEach(
-                    teamMemberDto -> {
-                        TeamMember teamMember = modelMapper.map(teamMemberDto, TeamMember.class);
-                        teamMember.setPassword(teamMemberDto.getPassword());
-                        if(Boolean.TRUE.equals(teamMemberDto.getIsAdmin()))
-                        {
-                            teamMember.setAdminAccount(new TeamAdmin());
-                            teamMember.getAdminAccount().setAccount(teamMember);
-                            teamMember.getAdminAccount().setUsername(teamMember.getUsername());
-                        }
-                        teamMembers.add(teamMember);
-                    });
-        }
+        teamMembersDto.forEach(
+                teamMemberDto -> {
+                    TeamMember teamMember = modelMapper.map(teamMemberDto, TeamMember.class);
+                    teamMember.setPassword(teamMemberDto.getPassword());
+                    if(Boolean.TRUE.equals(teamMemberDto.getIsAdmin()))
+                    {
+                        teamMember.setAdminAccount(new TeamAdmin());
+                        teamMember.getAdminAccount().setAccount(teamMember);
+                        teamMember.getAdminAccount().setUsername(teamMember.getUsername());
+                    }
+                    teamMembers.add(teamMember);
+                });
 
         return teamMembers;
     }
@@ -161,19 +155,16 @@ public class TeamMemberConverter
         if(teamMember == null)
             throw new NotFoundException("Utente non trovato.");
 
-        if (teamMemberDto != null)
-        {
-            TeamMember tmpMember =  modelMapper.map(teamMemberDto, TeamMember.class);
-            tmpMember.getComments().forEach(
-                    issueComment -> {
-                        issueComment.setMemberUsername(teamMember.getUsername());
-                        issueComment.setDate(LocalDate.now(ZoneId.systemDefault()));
+        TeamMember tmpMember =  modelMapper.map(teamMemberDto, TeamMember.class);
+        tmpMember.getComments().forEach(
+                issueComment -> {
+                    issueComment.setMemberUsername(teamMember.getUsername());
+                    issueComment.setDate(LocalDate.now(ZoneId.systemDefault()));
 
-                        if(teamMember.getComments().contains(issueComment))
-                            throw new DuplicateException("Questo commento è già stato postato.");
-                        teamMember.addComment(issueComment);
-                    });
-        }
+                    if(teamMember.getComments().contains(issueComment))
+                        throw new DuplicateException("Questo commento è già stato postato.");
+                    teamMember.addComment(issueComment);
+                });
 
         return teamMember;
     }
@@ -185,20 +176,17 @@ public class TeamMemberConverter
         if(teamMember == null)
             throw new NotFoundException("Utente non trovato.");
 
-        if (teamMemberDto != null)
-        {
-            TeamMember tmpMember =  modelMapper.map(teamMemberDto, TeamMember.class);
-            tmpMember.getNotifications().forEach(
-                    notification -> {
-                        notification.setMemberUsername(teamMember.getUsername());
-                        notification.setStatus(false);
+        TeamMember tmpMember =  modelMapper.map(teamMemberDto, TeamMember.class);
+        tmpMember.getNotifications().forEach(
+                notification -> {
+                    notification.setMemberUsername(teamMember.getUsername());
+                    notification.setStatus(false);
 
-                        if(teamMember.getNotifications().contains(notification))
-                            throw new DuplicateException("Questa notifica è già stata inviata.");
+                    if(teamMember.getNotifications().contains(notification))
+                        throw new DuplicateException("Questa notifica è già stata inviata.");
 
-                        teamMember.addNotification(notification);
-                    });
-        }
+                    teamMember.addNotification(notification);
+                });
 
         return teamMember;
     }

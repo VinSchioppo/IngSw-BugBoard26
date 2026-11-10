@@ -3,6 +3,7 @@ package com.ingsw.bugboard26.dto.converter;
 import com.ingsw.bugboard26.dto.teamadmin.*;
 import com.ingsw.bugboard26.entity.TeamAdmin;
 import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
@@ -52,22 +53,22 @@ public class TeamAdminConverter
 
     public static TeamAdmin convertFromNotificationsDto(
             TeamAdmin teamAdmin, TeamAdminDto teamAdminDto, ModelMapper modelMapper)
-            throws DuplicateException
+            throws NotFoundException, DuplicateException
     {
-        if (teamAdmin != null && teamAdminDto != null)
-        {
-            TeamAdmin tmpAdmin = modelMapper.map(teamAdminDto, TeamAdmin.class);
-            tmpAdmin.getNotifications().forEach(
-                    notification -> {
-                        notification.setAdminUsername(teamAdmin.getUsername());
-                        notification.setStatus(false);
+        if(teamAdmin == null)
+            throw new NotFoundException("Admin non trovato.");
 
-                        if(teamAdmin.getNotifications().contains(notification))
-                            throw new DuplicateException("Questa notifica è già stata inviata.");
+        TeamAdmin tmpAdmin = modelMapper.map(teamAdminDto, TeamAdmin.class);
+        tmpAdmin.getNotifications().forEach(
+                notification -> {
+                    notification.setAdminUsername(teamAdmin.getUsername());
+                    notification.setStatus(false);
 
-                        teamAdmin.addNotification(notification);
-                    });
-        }
+                    if(teamAdmin.getNotifications().contains(notification))
+                        throw new DuplicateException("Questa notifica è già stata inviata.");
+
+                    teamAdmin.addNotification(notification);
+                });
 
         return teamAdmin;
     }

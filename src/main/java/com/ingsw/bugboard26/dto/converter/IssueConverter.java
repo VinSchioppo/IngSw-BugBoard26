@@ -2,6 +2,8 @@ package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.issue.*;
 import com.ingsw.bugboard26.entity.Issue;
+import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
@@ -95,29 +97,36 @@ public class IssueConverter
     }
 
     public static Issue convertFromMemberDto(Issue issue, IssueMemberDto issueDto, ModelMapper modelMapper)
+            throws NotFoundException, DuplicateException
     {
-        if(issue != null && issueDto != null)
-        {
-            Issue tmpIssue = modelMapper.map(issueDto, Issue.class);
-            tmpIssue.getTeamMember().addIssue(issue);
-            issue.setTeamMember(tmpIssue.getTeamMember());
-        }
+        if(issue == null)
+            throw new NotFoundException("Issue non trovata.");
+
+        Issue tmpIssue = modelMapper.map(issueDto, Issue.class);
+        tmpIssue.getTeamMember().addIssue(issue);
+        issue.setTeamMember(tmpIssue.getTeamMember());
 
         return issue;
     }
 
     public static Issue convertFromLogsDto(Issue issue, IssueLogsDto issueDto, ModelMapper modelMapper)
+            throws NotFoundException, DuplicateException
     {
-        if(issue != null && issueDto != null)
-        {
-            Issue tmpIssue = modelMapper.map(issueDto, Issue.class);
-            tmpIssue.getIssueLogs().forEach(
-                    issueLog -> {
-                        issueLog.setIssue(issue);
-                        issueLog.setDate(LocalDate.now(ZoneId.systemDefault()));
-                        issue.addLog(issueLog);
-                    });
-        }
+        if(issue == null)
+            throw new NotFoundException("Issue non trovata.");
+
+        Issue tmpIssue = modelMapper.map(issueDto, Issue.class);
+        tmpIssue.getIssueLogs().forEach(
+                issueLog -> {
+                    issueLog.setIssue(issue);
+                    issueLog.setDate(LocalDate.now(ZoneId.systemDefault()));
+
+                    if(issue.getIssueLogs().contains(issueLog))
+                        throw new DuplicateException("Questo log è già stato salvato.");
+
+
+                    issue.addLog(issueLog);
+                });
 
         return issue;
     }

@@ -2,6 +2,7 @@ package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.project.*;
 import com.ingsw.bugboard26.entity.Project;
+import com.ingsw.bugboard26.exception.NotFoundException;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
@@ -48,26 +49,25 @@ public class ProjectConverter
 
     public static Project covertFromDto(ProjectDto projectDto, ModelMapper modelMapper)
     {
-        if(projectDto != null)
-            return modelMapper.map(projectDto, Project.class);
-        return null;
+        return modelMapper.map(projectDto, Project.class);
     }
 
     public static Project convertFromIssuesDto(Project project, ProjectIssuesDto projectDto, ModelMapper modelMapper)
+            throws NotFoundException
     {
-        if (project != null && projectDto != null)
-        {
-            Project tmpProject = modelMapper.map(projectDto, Project.class);
-            tmpProject.getIssues().forEach(
-                    issue -> {
-                        issue.setIdIssue(0);
-                        issue.setProject(project);
-                        issue.setStatus(false);
-                        issue.getTags().forEach(tag -> tag.setIssue(issue));
-                        issue.getImages().forEach(image -> image.setIssue(issue));
-                        project.addIssue(issue);
-                    });
-        }
+        if(project == null)
+            throw new NotFoundException("Progetto non trovato.");
+
+        Project tmpProject = modelMapper.map(projectDto, Project.class);
+        tmpProject.getIssues().forEach(
+                issue -> {
+                    issue.setIdIssue(0);
+                    issue.setProject(project);
+                    issue.setStatus(false);
+                    issue.getTags().forEach(tag -> tag.setIssue(issue));
+                    issue.getImages().forEach(image -> image.setIssue(issue));
+                    project.addIssue(issue);
+                });
 
         return project;
     }

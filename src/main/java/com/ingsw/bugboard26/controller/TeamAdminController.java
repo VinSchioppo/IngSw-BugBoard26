@@ -71,10 +71,6 @@ public class TeamAdminController
     {
         logger.info("****** Mandiamo la notifica *******");
 
-        if(notification == null || notification.getNotifications() == null ||
-                notification.getNotifications().isEmpty())
-            return new ResponseEntity<TeamAdminDto>(HttpStatus.NO_CONTENT);
-
         teamAdminService.insertNotifications(username, notification);
 
         logger.info("Notifica inviata con successo.");
@@ -87,10 +83,6 @@ public class TeamAdminController
             @PathVariable("username") String username, @RequestBody TeamAdminDto notifications)
     {
         logger.info("****** Aggiorniamo le notifiche *******");
-
-        if(notifications == null || notifications.getNotifications() == null
-                || notifications.getNotifications().isEmpty())
-            return new ResponseEntity<TeamAdminDto>(HttpStatus.NO_CONTENT);
 
         teamAdminService.updateStatusNotifications(username, notifications);
 

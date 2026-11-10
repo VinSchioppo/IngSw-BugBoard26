@@ -6,13 +6,17 @@ import com.ingsw.bugboard26.dto.issuelog.IssueLogDto;
 import com.ingsw.bugboard26.dto.issuetag.IssueTagDto;
 import com.ingsw.bugboard26.dto.project.ProjectDto;
 import com.ingsw.bugboard26.dto.teammember.TeamMemberInfoDto;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class IssueDto
 {
     private String title;

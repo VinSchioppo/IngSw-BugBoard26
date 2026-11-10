@@ -2,6 +2,7 @@ package com.ingsw.bugboard26.service.teamadmin;
 
 import com.ingsw.bugboard26.dto.teamadmin.*;
 import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.MissingFieldsException;
 import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.repository.TeamAdminRepository;
 import com.ingsw.bugboard26.dto.converter.TeamAdminConverter;
@@ -13,7 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = {
+        NotFoundException.class,
+        DuplicateException.class,
+        MissingFieldsException.class,
+})
 public class TeamAdminServiceImpl implements TeamAdminService
 {
     private final TeamAdminRepository teamAdminRepository;
@@ -43,8 +48,15 @@ public class TeamAdminServiceImpl implements TeamAdminService
 
     @Override
     public void insertNotifications(String username, TeamAdminDto notifications)
-            throws DuplicateException
+            throws MissingFieldsException, NotFoundException, DuplicateException
     {
+        if(notifications == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(notifications.getNotifications() == null || notifications.getNotifications().isEmpty())
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
+
         teamAdminRepository.saveAndFlush(
                 TeamAdminConverter.convertFromNotificationsDto(
                         teamAdminRepository.findByAccountUsername(username), notifications, modelMapper));
@@ -52,8 +64,20 @@ public class TeamAdminServiceImpl implements TeamAdminService
 
     @Override
     public void updateStatusNotifications(String username, TeamAdminDto notifications)
+            throws MissingFieldsException, NotFoundException
     {
+        if(notifications == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(notifications.getNotifications() == null || notifications.getNotifications().isEmpty())
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
+
         var teamAdmin = teamAdminRepository.findByAccountUsername(username);
+
+        if(teamAdmin == null)
+            throw new NotFoundException("Admin non trovato.");
+
         for(var notification : notifications.getNotifications())
         {
             for(var adminNotification : teamAdmin.getNotifications())
@@ -72,7 +96,9 @@ public class TeamAdminServiceImpl implements TeamAdminService
     {
         var teamAdmin = teamAdminRepository.findByAccountUsername(username);
         if(teamAdmin == null)
-            throw new NotFoundException("Il team admin " + username + " non è stato trovato.");
+            throw new NotFoundException("Admin non trovato.");
+        teamAdmin.getAccount().setAdminAccount(null);
+        teamAdmin.setAccount(null);
         teamAdminRepository.delete(teamAdmin);
     }
 
@@ -82,7 +108,7 @@ public class TeamAdminServiceImpl implements TeamAdminService
     {
         var teamAdmin = teamAdminRepository.findByAccountUsername(username);
         if(teamAdmin == null)
-            throw new NotFoundException("Il team admin " + username + " non è stato trovato.");
+            throw new NotFoundException("Admin non trovato.");
         teamAdmin.getNotifications().removeIf(
                 notification -> Boolean.TRUE.equals(notification.getStatus()));
         teamAdminRepository.saveAndFlush(teamAdmin);

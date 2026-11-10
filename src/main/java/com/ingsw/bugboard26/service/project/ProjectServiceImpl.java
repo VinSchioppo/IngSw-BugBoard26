@@ -1,6 +1,8 @@
 package com.ingsw.bugboard26.service.project;
 
 import com.ingsw.bugboard26.dto.project.*;
+import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.MissingFieldsException;
 import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.repository.ProjectRepository;
 import com.ingsw.bugboard26.dto.converter.ProjectConverter;
@@ -12,7 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = {
+        NotFoundException.class,
+        DuplicateException.class,
+        MissingFieldsException.class,
+})
 public class ProjectServiceImpl implements ProjectService
 {
     private final ProjectRepository projectRepository;
@@ -42,13 +48,28 @@ public class ProjectServiceImpl implements ProjectService
 
     @Override
     public void insertProject(ProjectDto projectDto)
+            throws MissingFieldsException
     {
+        if(projectDto == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if((projectDto.getTitle() == null || projectDto.getTitle().isEmpty()) ||
+            (projectDto.getDescription() == null || projectDto.getDescription().isEmpty()))
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
         projectRepository.saveAndFlush(ProjectConverter.covertFromDto(projectDto, modelMapper));
     }
 
     @Override
     public void insertIssues(int idProject, ProjectIssuesDto issues)
+            throws MissingFieldsException, NotFoundException
     {
+        if(issues == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if((issues.getIssues() == null || issues.getIssues().isEmpty()))
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
         projectRepository.saveAndFlush(
                 ProjectConverter.convertFromIssuesDto(
                         projectRepository.findByIdProject(idProject), issues, modelMapper));
@@ -56,7 +77,11 @@ public class ProjectServiceImpl implements ProjectService
 
     @Override
     public void updateProject(int idProject, ProjectDto projectDto)
+            throws MissingFieldsException, NotFoundException
     {
+        if(projectDto == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
         String title = projectDto.getTitle();
         String description = projectDto.getDescription();
         var project = projectRepository.findByIdProject(idProject);
@@ -68,7 +93,8 @@ public class ProjectServiceImpl implements ProjectService
     }
 
     @Override
-    public void deleteProject(int idProject) throws NotFoundException
+    public void deleteProject(int idProject)
+            throws NotFoundException
     {
         var project = projectRepository.findByIdProject(idProject);
         if(project == null)

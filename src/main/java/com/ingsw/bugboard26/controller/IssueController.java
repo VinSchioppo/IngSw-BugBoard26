@@ -80,7 +80,7 @@ public class IssueController
     }
 
     @GetMapping(value = "/comments/{idIssue}", produces = "application/json")
-    public ResponseEntity<IssueCommentsDto> getIssueCommentsByIdIssue(@PathVariable("idIssue") int idIssue)
+    public ResponseEntity<IssueCommentsDto> getIssueComments(@PathVariable("idIssue") int idIssue)
             throws NotFoundException
     {
         logger.info("****** Cerchiamo i commenti dell'issue *******");
@@ -96,7 +96,7 @@ public class IssueController
     }
 
     @GetMapping(value = "/logs/{idIssue}", produces = "application/json")
-    public ResponseEntity<IssueLogsDto> getIssueLogsByIdIssue(@PathVariable("idIssue") int idIssue)
+    public ResponseEntity<IssueLogsDto> getIssueLogs(@PathVariable("idIssue") int idIssue)
             throws NotFoundException
     {
         logger.info("****** Cerchiamo i logs dell'issue *******");
@@ -117,9 +117,6 @@ public class IssueController
     {
         logger.info("****** Assegnamo la issue *******");
 
-        if(member == null || member.getTeamMember() == null)
-            return new ResponseEntity<IssueMemberDto>(HttpStatus.NO_CONTENT);
-
         issueService.insertMember(idIssue, member);
 
         logger.info("Issue assegnata con successo.");
@@ -133,9 +130,6 @@ public class IssueController
     {
         logger.info("****** Salviamo i log della issue *******");
 
-        if(logs == null || logs.getIssueLogs() == null || logs.getIssueLogs().isEmpty())
-            return new ResponseEntity<IssueLogsDto>(HttpStatus.NO_CONTENT);
-
         issueService.insertLogs(idIssue, logs);
 
         logger.info("Log salvati con successo.");
@@ -148,9 +142,6 @@ public class IssueController
             @PathVariable("idIssue") int idIssue, @RequestBody IssueInfoDto issue)
     {
         logger.info("****** Aggiorniamo lo stato dell'issue *******");
-
-        if(issue == null)
-            return new ResponseEntity<IssueInfoDto>(HttpStatus.NO_CONTENT);
 
         issueService.updateStatus(idIssue, issue);
 

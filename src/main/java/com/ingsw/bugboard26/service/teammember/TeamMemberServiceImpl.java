@@ -2,6 +2,7 @@ package com.ingsw.bugboard26.service.teammember;
 
 import com.ingsw.bugboard26.dto.teammember.*;
 import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.MissingFieldsException;
 import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.repository.TeamMemberRepository;
 import com.ingsw.bugboard26.dto.converter.TeamMemberConverter;
@@ -19,7 +20,8 @@ import java.util.Set;
 @Service
 @Transactional(rollbackFor = {
         NotFoundException.class,
-        DuplicateException.class
+        DuplicateException.class,
+        MissingFieldsException.class,
 })
 public class TeamMemberServiceImpl implements TeamMemberService
 {
@@ -76,11 +78,24 @@ public class TeamMemberServiceImpl implements TeamMemberService
 
     @Override
     public void insertTeamMembers(List<TeamMemberInfoDto> teamMembers)
-            throws DuplicateException
+            throws MissingFieldsException, DuplicateException
     {
+        if(teamMembers == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(teamMembers.isEmpty())
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
         List<String> usernames = new ArrayList<>();
-        teamMembers.forEach(teamMember ->
-                usernames.add(teamMember.getUsername()));
+        for(TeamMemberInfoDto teamMember : teamMembers)
+        {
+            if((teamMember.getUsername() == null || teamMember.getUsername().isEmpty()) ||
+            (teamMember.getEmail() == null || teamMember.getEmail().isEmpty()) ||
+            (teamMember.getPassword() == null || teamMember.getPassword().isEmpty()))
+                throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
+            usernames.add(teamMember.getUsername());
+        }
 
         Set<String> usernamesSet = new HashSet<>(usernames);
 
@@ -96,8 +111,14 @@ public class TeamMemberServiceImpl implements TeamMemberService
 
     @Override
     public void insertComments(String username, TeamMemberCommentsDto comments)
-            throws NotFoundException, DuplicateException
+            throws MissingFieldsException, NotFoundException, DuplicateException
     {
+        if(comments == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(comments.getComments() == null || comments.getComments().isEmpty())
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
         teamMemberRepository.saveAndFlush(
                 TeamMemberConverter.convertFromCommentsDto(
                         teamMemberRepository.findByUsername(username), comments, modelMapper));
@@ -105,8 +126,14 @@ public class TeamMemberServiceImpl implements TeamMemberService
 
     @Override
     public void insertNotifications(String username, TeamMemberNotificationsDto notifications)
-            throws NotFoundException, DuplicateException
+            throws MissingFieldsException, NotFoundException, DuplicateException
     {
+        if(notifications == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(notifications.getNotifications() == null || notifications.getNotifications().isEmpty())
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
         teamMemberRepository.saveAndFlush(
                 TeamMemberConverter.convertFromNotificationsDto(
                         teamMemberRepository.findByUsername(username), notifications, modelMapper));
@@ -114,15 +141,33 @@ public class TeamMemberServiceImpl implements TeamMemberService
 
     @Override
     public void updatePassword(String username, TeamMemberInfoDto teamMemberDto)
+            throws MissingFieldsException, NotFoundException
     {
+        if(teamMemberDto == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(teamMemberDto.getPassword() == null || teamMemberDto.getPassword().isEmpty())
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
         var teamMember = teamMemberRepository.findByUsername(username);
+
+        if(teamMember == null)
+            throw new NotFoundException("Utente non trovato.");
+
         teamMember.setPassword(passwordEncoder.encode(teamMemberDto.getPassword()));
         teamMemberRepository.saveAndFlush(teamMember);
     }
 
     @Override
-    public void updateToAdmin(List<TeamMemberInfoDto> teamMembersDto) throws NotFoundException
+    public void updateToAdmin(List<TeamMemberInfoDto> teamMembersDto)
+            throws MissingFieldsException, NotFoundException
     {
+        if(teamMembersDto == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(teamMembersDto.isEmpty())
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
         teamMembersDto.forEach( teamMember ->
                 teamMemberRepository.saveAndFlush(
                         TeamMemberConverter.convertToAdmin(teamMemberRepository.findByUsername(teamMember.getUsername()))));
@@ -130,8 +175,19 @@ public class TeamMemberServiceImpl implements TeamMemberService
 
     @Override
     public void updateStatusNotifications(String username, TeamMemberNotificationsDto notifications)
+            throws MissingFieldsException, NotFoundException
     {
+        if(notifications == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(notifications.getNotifications() == null || notifications.getNotifications().isEmpty())
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
         var teamMember = teamMemberRepository.findByUsername(username);
+
+        if(teamMember == null)
+            throw new NotFoundException("Utente non trovato.");
+
         for(var notification : notifications.getNotifications())
         {
             for(var memberNotification : teamMember.getNotifications())
@@ -149,8 +205,10 @@ public class TeamMemberServiceImpl implements TeamMemberService
             throws NotFoundException
     {
         var teamMember = teamMemberRepository.findByUsername(username);
+
         if(teamMember == null)
-            throw new NotFoundException("L'utente " + username + " non è stato trovato.");
+            throw new NotFoundException("Utente non trovato.");
+
         teamMemberRepository.delete(teamMember);
     }
 
@@ -159,8 +217,9 @@ public class TeamMemberServiceImpl implements TeamMemberService
             throws NotFoundException
     {
         var teamMember = teamMemberRepository.findByUsername(username);
+
         if(teamMember == null)
-            throw new NotFoundException("L'utente " + username + " non è stato trovato.");
+            throw new NotFoundException("Utente non trovato.");
 
         teamMember.getNotifications().removeIf(
                 notification -> Boolean.TRUE.equals(notification.getStatus()));

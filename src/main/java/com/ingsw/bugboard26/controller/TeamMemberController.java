@@ -120,9 +120,6 @@ public class TeamMemberController
     {
         logger.info("****** Registriamo i nuovi utenti *******");
 
-        if(teamMembers == null || teamMembers.isEmpty())
-            return new ResponseEntity<List<TeamMemberInfoDto>>(HttpStatus.NO_CONTENT);
-
         teamMemberService.insertTeamMembers(teamMembers);
 
         logger.info("Utenti registrati con successo.");
@@ -135,10 +132,6 @@ public class TeamMemberController
             @PathVariable("username") String username, @RequestBody TeamMemberCommentsDto comments)
     {
         logger.info("****** Inseriamo un commento *******");
-
-        if(comments == null || comments.getComments() == null
-                || comments.getComments().isEmpty())
-            return new ResponseEntity<TeamMemberCommentsDto>(HttpStatus.NO_CONTENT);
 
         teamMemberService.insertComments(username, comments);
 
@@ -153,10 +146,6 @@ public class TeamMemberController
     {
         logger.info("****** Mandiamo la notifica *******");
 
-        if(notifications == null || notifications.getNotifications() == null
-                || notifications.getNotifications().isEmpty())
-            return new ResponseEntity<TeamMemberNotificationsDto>(HttpStatus.NO_CONTENT);
-
         teamMemberService.insertNotifications(username, notifications);
 
         logger.info("Notifica inviata con successo.");
@@ -170,10 +159,6 @@ public class TeamMemberController
     {
         logger.info("****** Cambiamo la password utente *******");
 
-        if(password == null || password.getPassword() == null
-                || password.getPassword().isEmpty())
-            return new ResponseEntity<TeamMemberInfoDto>(HttpStatus.NO_CONTENT);
-
         teamMemberService.updatePassword(username, password);
 
         logger.info("Password cambiata con successo.");
@@ -185,9 +170,6 @@ public class TeamMemberController
     public ResponseEntity<List<TeamMemberInfoDto>> promoteMembers(@RequestBody List<TeamMemberInfoDto> teamMembers)
     {
         logger.info("****** Promuoviamo utenti ad admin *******");
-
-        if(teamMembers == null || teamMembers.isEmpty())
-            return new ResponseEntity<List<TeamMemberInfoDto>>(HttpStatus.NO_CONTENT);
 
         teamMemberService.updateToAdmin(teamMembers);
 
@@ -201,10 +183,6 @@ public class TeamMemberController
             @PathVariable("username") String username, @RequestBody TeamMemberNotificationsDto notifications)
     {
         logger.info("****** Aggiorniamo le notifiche *******");
-
-        if(notifications == null || notifications.getNotifications() == null
-                || notifications.getNotifications().isEmpty())
-            return new ResponseEntity<TeamMemberNotificationsDto>(HttpStatus.NO_CONTENT);
 
         teamMemberService.updateStatusNotifications(username, notifications);
 
