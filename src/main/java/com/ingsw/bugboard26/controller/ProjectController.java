@@ -1,7 +1,6 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.dto.project.*;
-import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.service.project.ProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,6 @@ public class ProjectController
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<ProjectDto>> getAllProjects()
-            throws NotFoundException
     {
         logger.info("****** Otteniamo tutti i progetti *******");
 
@@ -44,8 +42,7 @@ public class ProjectController
     }
 
     @GetMapping(value = "/{idproject}", produces = "application/json")
-    public ResponseEntity<ProjectIssuesDto> getProject(@PathVariable("idproject") int idProject)
-            throws NotFoundException
+    public ResponseEntity<ProjectIssuesDto> getProject(@PathVariable("idproject") Long idProject)
     {
         logger.info("****** Cerchiamo il progetto *******");
 
@@ -70,7 +67,7 @@ public class ProjectController
 
     @PutMapping(value = "/issues/{idProject}")
     public ResponseEntity<ProjectIssuesDto> reportIssue(
-            @PathVariable("idProject") int idProject, @RequestBody ProjectIssuesDto issue)
+            @PathVariable("idProject") Long idProject, @RequestBody ProjectIssuesDto issue)
     {
         logger.info("****** Segnaliamo una nuova issue *******");
 
@@ -83,7 +80,7 @@ public class ProjectController
 
     @PostMapping(value = "/{idProject}")
     public ResponseEntity<ProjectDto> changeInfo(
-            @PathVariable("idProject") int idProject, @RequestBody ProjectDto projectDto)
+            @PathVariable("idProject") Long idProject, @RequestBody ProjectDto projectDto)
     {
         logger.info("****** Aggiorniamo le informazioni del progetto *******");
 
@@ -95,8 +92,7 @@ public class ProjectController
     }
 
     @DeleteMapping(value = "/{idProject}")
-    public ResponseEntity<Object> removeProject(@PathVariable("idProject") int idProject)
-            throws NotFoundException
+    public ResponseEntity<Object> removeProject(@PathVariable("idProject") Long idProject)
     {
         logger.info("****** Eliminiamo il progetto con id {} ******", idProject);
 

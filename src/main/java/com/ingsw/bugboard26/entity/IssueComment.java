@@ -17,7 +17,7 @@ public class IssueComment
     @Id
     @Column(name = "IDISSUE")
     @Basic(optional = false)
-    private int idIssue;
+    private Long idIssue;
 
     @Id
     @Column(name = "MEMBERUSERNAME")

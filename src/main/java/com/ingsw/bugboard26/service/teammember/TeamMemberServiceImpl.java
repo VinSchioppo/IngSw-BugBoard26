@@ -50,6 +50,7 @@ public class TeamMemberServiceImpl implements TeamMemberService
     @Override
     @Transactional(readOnly = true)
     public TeamMemberDto selectByUsername(String username)
+            throws NotFoundException
     {
         return TeamMemberConverter.convertToDto(
                 teamMemberRepository.findByUsername(username), modelMapper);
@@ -57,21 +58,27 @@ public class TeamMemberServiceImpl implements TeamMemberService
 
     @Override
     @Transactional(readOnly = true)
-    public TeamMemberIssuesDto selectIssuesByUsername(String username) {
+    public TeamMemberIssuesDto selectIssuesByUsername(String username)
+            throws NotFoundException
+    {
         return TeamMemberConverter.convertToIssueDto(
                 teamMemberRepository.findByUsername(username), modelMapper);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public TeamMemberCommentsDto selectCommentsByUsername(String username) {
+    public TeamMemberCommentsDto selectCommentsByUsername(String username)
+            throws NotFoundException
+    {
         return TeamMemberConverter.convertToCommentsDto(
                 teamMemberRepository.findByUsername(username), modelMapper);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public TeamMemberNotificationsDto selectNotificationsByUsername(String username) {
+    public TeamMemberNotificationsDto selectNotificationsByUsername(String username)
+            throws NotFoundException
+    {
         return TeamMemberConverter.convertToNotificationsDto(
                 teamMemberRepository.findByUsername(username), modelMapper);
     }
@@ -192,6 +199,10 @@ public class TeamMemberServiceImpl implements TeamMemberService
         {
             for(var memberNotification : teamMember.getNotifications())
             {
+                if(notification.getAdminUsername() == null || memberNotification.getAdminUsername().isEmpty() ||
+                        notification.getDescription() == null || notification.getDescription().isEmpty())
+                    throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
                 if(notification.getAdminUsername().equals(memberNotification.getAdminUsername())
                         && notification.getDescription().equals(memberNotification.getDescription()))
                     memberNotification.setStatus(true);

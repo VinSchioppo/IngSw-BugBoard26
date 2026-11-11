@@ -1,7 +1,6 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.dto.teamadmin.*;
-import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.service.teamadmin.TeamAdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,14 +34,10 @@ public class TeamAdminController
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<List<TeamAdminInfoDto>> getAllTeamAdmin()
-            throws NotFoundException
     {
         logger.info("****** Otteniamo tutti i team admins *******");
 
         List<TeamAdminInfoDto> admins = teamAdminService.selectAll();
-
-        if (admins.isEmpty())
-            throw new NotFoundException("Non è stato trovato nessun team admin.");
 
         logger.info("Numero dei record: {}.", admins.size());
 
@@ -51,14 +46,10 @@ public class TeamAdminController
 
     @GetMapping(value = "/{username}",produces = "application/json")
     public ResponseEntity<TeamAdminDto> getAdmin(@PathVariable("username") String username)
-            throws NotFoundException
     {
         logger.info("****** Cerchiamo l'admin *******");
 
         TeamAdminDto admin = teamAdminService.selectByUsername(username);
-
-        if (admin == null)
-            throw new NotFoundException("L'admin " + username + " non è stato trovato.");
 
         logger.info("Utente trovato.");
 

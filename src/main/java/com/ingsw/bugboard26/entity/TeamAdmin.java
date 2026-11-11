@@ -33,10 +33,4 @@ public class TeamAdmin
     @ToString.Exclude
     @PrimaryKeyJoinColumn
     private List<Notification> notifications = new ArrayList<>();
-
-
-    public void addNotification(Notification notification)
-    {
-        notifications.add(notification);
-    }
 }

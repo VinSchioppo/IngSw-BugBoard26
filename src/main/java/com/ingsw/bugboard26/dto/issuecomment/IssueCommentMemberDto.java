@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class IssueCommentMemberDto
 {
-    private int idIssue;
+    private Long idIssue;
     private String description;
     private LocalDate date;
 }

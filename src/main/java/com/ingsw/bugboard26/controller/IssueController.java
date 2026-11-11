@@ -1,7 +1,6 @@
 package com.ingsw.bugboard26.controller;
 
 import com.ingsw.bugboard26.dto.issue.*;
-import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.service.issue.IssueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,19 +27,39 @@ public class IssueController
     }
 
     @GetMapping(value = "/{idIssue}", produces = "application/json")
-    public ResponseEntity<IssueDto> getIssueByIdIssue(@PathVariable("idIssue") int idIssue)
-            throws NotFoundException
+    public ResponseEntity<IssueDto> getIssueByIdIssue(@PathVariable("idIssue") Long idIssue)
     {
         logger.info("****** Cerchiamo la issue con id {} *******", idIssue);
 
         IssueDto issue = issueService.selectByIdIssue(idIssue);
 
-        if (issue == null)
-            throw new NotFoundException("L'issue con id " + idIssue + " non è stata trovata.");
-
         logger.info("Issue trovate.");
 
         return new ResponseEntity<IssueDto>(issue, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/comments/{idIssue}", produces = "application/json")
+    public ResponseEntity<IssueCommentsDto> getIssueComments(@PathVariable("idIssue") Long idIssue)
+    {
+        logger.info("****** Cerchiamo i commenti dell'issue *******");
+
+        IssueCommentsDto issue = issueService.selectCommentsByIdIssue(idIssue);
+
+        logger.info("Issue trovata.");
+
+        return new ResponseEntity<IssueCommentsDto>(issue, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/logs/{idIssue}", produces = "application/json")
+    public ResponseEntity<IssueLogsDto> getIssueLogs(@PathVariable("idIssue") Long idIssue)
+    {
+        logger.info("****** Cerchiamo i logs dell'issue *******");
+
+        IssueLogsDto issue = issueService.selectLogsByIdIssue(idIssue);
+
+        logger.info("Logs trovati.");
+
+        return new ResponseEntity<IssueLogsDto>(issue, HttpStatus.OK);
     }
 
     @GetMapping(params = "member", produces = "application/json")
@@ -79,54 +98,9 @@ public class IssueController
         return new ResponseEntity<List<IssueInfoDto>>(issues, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/comments/{idIssue}", produces = "application/json")
-    public ResponseEntity<IssueCommentsDto> getIssueComments(@PathVariable("idIssue") int idIssue)
-            throws NotFoundException
-    {
-        logger.info("****** Cerchiamo i commenti dell'issue *******");
-
-        IssueCommentsDto issue = issueService.selectCommentsByIdIssue(idIssue);
-
-        if (issue == null)
-            throw new NotFoundException("L'issue con id " + idIssue + " non è stata trovata.");
-
-        logger.info("Issue trovata.");
-
-        return new ResponseEntity<IssueCommentsDto>(issue, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/logs/{idIssue}", produces = "application/json")
-    public ResponseEntity<IssueLogsDto> getIssueLogs(@PathVariable("idIssue") int idIssue)
-            throws NotFoundException
-    {
-        logger.info("****** Cerchiamo i logs dell'issue *******");
-
-        IssueLogsDto issue = issueService.selectLogsByIdIssue(idIssue);
-
-        if (issue == null)
-            throw new NotFoundException("L'issue con id " + idIssue + " non è stata trovata.");
-
-        logger.info("Logs trovati.");
-
-        return new ResponseEntity<IssueLogsDto>(issue, HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/member/{idIssue}")
-    public ResponseEntity<IssueMemberDto> assignMember(
-            @PathVariable("idIssue") int idIssue, @RequestBody IssueMemberDto member)
-    {
-        logger.info("****** Assegnamo la issue *******");
-
-        issueService.insertMember(idIssue, member);
-
-        logger.info("Issue assegnata con successo.");
-
-        return new ResponseEntity<IssueMemberDto>(new HttpHeaders(), HttpStatus.CREATED);
-    }
-
     @PutMapping(value = "/logs/{idIssue}")
     public ResponseEntity<IssueLogsDto> logChange(
-            @PathVariable("idIssue") int idIssue, @RequestBody IssueLogsDto logs)
+            @PathVariable("idIssue") Long idIssue, @RequestBody IssueLogsDto logs)
     {
         logger.info("****** Salviamo i log della issue *******");
 
@@ -137,9 +111,22 @@ public class IssueController
         return new ResponseEntity<IssueLogsDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
+    @PostMapping(value = "/member/{idIssue}")
+    public ResponseEntity<IssueMemberDto> assignMember(
+            @PathVariable("idIssue") Long idIssue, @RequestBody IssueMemberDto member)
+    {
+        logger.info("****** Assegnamo la issue *******");
+
+        issueService.insertMember(idIssue, member);
+
+        logger.info("Issue assegnata con successo.");
+
+        return new ResponseEntity<IssueMemberDto>(new HttpHeaders(), HttpStatus.ACCEPTED);
+    }
+
     @PostMapping(value = "/status/{idIssue}")
     public ResponseEntity<IssueInfoDto> changeStatus(
-            @PathVariable("idIssue") int idIssue, @RequestBody IssueInfoDto issue)
+            @PathVariable("idIssue") Long idIssue, @RequestBody IssueInfoDto issue)
     {
         logger.info("****** Aggiorniamo lo stato dell'issue *******");
 
@@ -151,8 +138,7 @@ public class IssueController
     }
 
     @DeleteMapping(value = "/{idIssue}")
-    public ResponseEntity<Object> removeIssue(@PathVariable("idIssue") int idIssue)
-            throws NotFoundException
+    public ResponseEntity<Object> removeIssue(@PathVariable("idIssue") Long idIssue)
     {
         logger.info("****** Eliminiamo l'issue con id {} ******", idIssue);
 

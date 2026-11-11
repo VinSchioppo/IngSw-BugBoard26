@@ -6,6 +6,7 @@ import com.ingsw.bugboard26.exception.MissingFieldsException;
 import com.ingsw.bugboard26.exception.NotFoundException;
 import com.ingsw.bugboard26.repository.IssueRepository;
 import com.ingsw.bugboard26.dto.converter.IssueConverter;
+import com.ingsw.bugboard26.repository.TeamMemberRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,33 +24,39 @@ public class IssueServiceImpl implements IssueService
 {
     private final IssueRepository issueRepository;
     private final ModelMapper modelMapper;
+    private final TeamMemberRepository teamMemberRepository;
 
     @Autowired
-    public IssueServiceImpl(final IssueRepository issueRepository, ModelMapper modelMapper)
+    public IssueServiceImpl(final IssueRepository issueRepository, ModelMapper modelMapper, TeamMemberRepository teamMemberRepository)
     {
         this.issueRepository = issueRepository;
         this.modelMapper = modelMapper;
+        this.teamMemberRepository = teamMemberRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public IssueDto selectByIdIssue(int idIssue)
+    public IssueDto selectByIdIssue(Long idIssue)
+            throws NotFoundException
     {
-
         return IssueConverter.convertToDto(
                 issueRepository.findByIdIssue(idIssue), modelMapper);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public IssueCommentsDto selectCommentsByIdIssue(int idIssue) {
+    public IssueCommentsDto selectCommentsByIdIssue(Long idIssue)
+            throws NotFoundException
+    {
         return IssueConverter.convertToCommentsDto(
                 issueRepository.findByIdIssue(idIssue), modelMapper);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public IssueLogsDto selectLogsByIdIssue(int idIssue) {
+    public IssueLogsDto selectLogsByIdIssue(Long idIssue)
+            throws NotFoundException
+    {
         return IssueConverter.convertToLogsDto(
                 issueRepository.findByIdIssue(idIssue), modelMapper);
     }
@@ -79,22 +86,7 @@ public class IssueServiceImpl implements IssueService
     }
 
     @Override
-    public void insertMember(int idIssue, IssueMemberDto teamMember)
-            throws MissingFieldsException, NotFoundException
-    {
-        if(teamMember == null)
-            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
-
-        if(teamMember.getTeamMember() == null || teamMember.getTeamMember().getUsername() == null)
-            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
-
-        issueRepository.saveAndFlush(
-                IssueConverter.convertFromMemberDto(
-                        issueRepository.findByIdIssue(idIssue), teamMember, modelMapper));
-    }
-
-    @Override
-    public void insertLogs(int idIssue, IssueLogsDto logs)
+    public void insertLogs(Long idIssue, IssueLogsDto logs)
             throws MissingFieldsException, NotFoundException, DuplicateException
     {
         if(logs == null)
@@ -109,7 +101,26 @@ public class IssueServiceImpl implements IssueService
     }
 
     @Override
-    public void updateStatus(int idIssue, IssueInfoDto issueInfoDto)
+    public void insertMember(Long idIssue, IssueMemberDto teamMember)
+            throws MissingFieldsException, NotFoundException
+    {
+        if(teamMember == null)
+            throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+
+        if(teamMember.getTeamMember() == null || teamMember.getTeamMember().getUsername() == null ||
+                teamMember.getTeamMember().getUsername().isEmpty())
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
+        if(teamMemberRepository.findByUsername(teamMember.getTeamMember().getUsername()) == null)
+            throw new NotFoundException("Utente non trovato.");
+
+        issueRepository.saveAndFlush(
+                IssueConverter.convertFromMemberDto(
+                        issueRepository.findByIdIssue(idIssue), teamMember, modelMapper));
+    }
+
+    @Override
+    public void updateStatus(Long idIssue, IssueInfoDto issueInfoDto)
             throws MissingFieldsException, NotFoundException
     {
         if(issueInfoDto == null)
@@ -128,7 +139,7 @@ public class IssueServiceImpl implements IssueService
     }
 
     @Override
-    public void deleteIssue(int idIssue)
+    public void deleteIssue(Long idIssue)
             throws NotFoundException
     {
         var issue = issueRepository.findByIdIssue(idIssue);

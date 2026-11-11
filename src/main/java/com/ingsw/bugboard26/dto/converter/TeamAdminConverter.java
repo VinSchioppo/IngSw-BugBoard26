@@ -3,6 +3,7 @@ package com.ingsw.bugboard26.dto.converter;
 import com.ingsw.bugboard26.dto.teamadmin.*;
 import com.ingsw.bugboard26.entity.TeamAdmin;
 import com.ingsw.bugboard26.exception.DuplicateException;
+import com.ingsw.bugboard26.exception.MissingFieldsException;
 import com.ingsw.bugboard26.exception.NotFoundException;
 import org.modelmapper.ModelMapper;
 
@@ -13,19 +14,19 @@ public class TeamAdminConverter
     private TeamAdminConverter() {}
 
     public static TeamAdminDto convertToDto(TeamAdmin teamAdmin, ModelMapper modelMapper)
+            throws NotFoundException
     {
-        TeamAdminDto teamAdminDto = null;
+        if(teamAdmin == null)
+            throw new NotFoundException("Admin non trovato.");
 
-        if (teamAdmin != null)
-        {
-            teamAdmin.getNotifications().removeIf(notification ->
-                    Boolean.TRUE.equals(notification.getStatus()));
-            teamAdminDto = modelMapper.map(teamAdmin, TeamAdminDto.class);
-        }
-        return teamAdminDto;
+        teamAdmin.getNotifications().removeIf(notification ->
+            Boolean.TRUE.equals(notification.getStatus()));
+
+        return modelMapper.map(teamAdmin, TeamAdminDto.class);
     }
 
     public static List<TeamAdminDto> convertToDto(List<TeamAdmin> teamAdmins, ModelMapper modelMapper)
+            throws NotFoundException
     {
         return teamAdmins
                 .stream()
@@ -34,15 +35,16 @@ public class TeamAdminConverter
     }
 
     public static TeamAdminInfoDto convertToInfoDto(TeamAdmin teamAdmin, ModelMapper modelMapper)
+            throws NotFoundException
     {
-        TeamAdminInfoDto teamAdminDto = null;
+        if(teamAdmin == null)
+            throw new NotFoundException("Admin non trovato.");
 
-        if (teamAdmin != null)
-            teamAdminDto = modelMapper.map(teamAdmin, TeamAdminInfoDto.class);
-        return teamAdminDto;
+        return modelMapper.map(teamAdmin, TeamAdminInfoDto.class);
     }
 
     public static List<TeamAdminInfoDto> convertToInfoDto(List<TeamAdmin> teamAdmins, ModelMapper modelMapper)
+            throws NotFoundException
     {
         return teamAdmins
                 .stream()
@@ -53,7 +55,7 @@ public class TeamAdminConverter
 
     public static TeamAdmin convertFromNotificationsDto(
             TeamAdmin teamAdmin, TeamAdminDto teamAdminDto, ModelMapper modelMapper)
-            throws NotFoundException, DuplicateException
+            throws MissingFieldsException, NotFoundException, DuplicateException
     {
         if(teamAdmin == null)
             throw new NotFoundException("Admin non trovato.");
@@ -61,13 +63,17 @@ public class TeamAdminConverter
         TeamAdmin tmpAdmin = modelMapper.map(teamAdminDto, TeamAdmin.class);
         tmpAdmin.getNotifications().forEach(
                 notification -> {
+                    if(notification.getDescription() == null || notification.getDescription().isEmpty() ||
+                    notification.getMemberUsername() == null || notification.getMemberUsername().isEmpty())
+                        throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
                     notification.setAdminUsername(teamAdmin.getUsername());
                     notification.setStatus(false);
 
                     if(teamAdmin.getNotifications().contains(notification))
                         throw new DuplicateException("Questa notifica è già stata inviata.");
 
-                    teamAdmin.addNotification(notification);
+                    teamAdmin.getNotifications().add(notification);
                 });
 
         return teamAdmin;

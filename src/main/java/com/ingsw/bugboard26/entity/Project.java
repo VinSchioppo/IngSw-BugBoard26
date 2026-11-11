@@ -17,7 +17,7 @@ public class Project
     @Id
     @Column(name = "IDPROJECT")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idProject;
+    private Long idProject;
 
     @Column(name = "TITLE")
     @Basic(optional = false)
@@ -32,9 +32,4 @@ public class Project
     @ToString.Exclude
     @JsonManagedReference
     private List<Issue> issues = new ArrayList<>();
-
-    public void addIssue(Issue issue)
-    {
-        issues.add(issue);
-    }
 }

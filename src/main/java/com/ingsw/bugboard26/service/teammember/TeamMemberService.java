@@ -10,10 +10,10 @@ import java.util.List;
 public interface TeamMemberService
 {
     List<TeamMemberInfoDto> selectAll();
-    TeamMemberDto selectByUsername(String username);
-    TeamMemberIssuesDto selectIssuesByUsername(String username);
-    TeamMemberCommentsDto selectCommentsByUsername(String username);
-    TeamMemberNotificationsDto selectNotificationsByUsername(String username);
+    TeamMemberDto selectByUsername(String username) throws NotFoundException;
+    TeamMemberIssuesDto selectIssuesByUsername(String username) throws NotFoundException;
+    TeamMemberCommentsDto selectCommentsByUsername(String username) throws NotFoundException;
+    TeamMemberNotificationsDto selectNotificationsByUsername(String username) throws NotFoundException;
 
     void insertTeamMembers(List<TeamMemberInfoDto> teamMembers) throws MissingFieldsException, DuplicateException;
     void insertComments(String username, TeamMemberCommentsDto comments) throws MissingFieldsException, NotFoundException, DuplicateException;

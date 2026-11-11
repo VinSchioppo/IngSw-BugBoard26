@@ -9,19 +9,19 @@ import java.util.List;
 
 public interface IssueService
 {
-    IssueDto selectByIdIssue(int idIssue);
-    IssueCommentsDto selectCommentsByIdIssue(int idIssue);
-    IssueLogsDto selectLogsByIdIssue(int idIssue);
+    IssueDto selectByIdIssue(Long idIssue) throws NotFoundException;
+    IssueCommentsDto selectCommentsByIdIssue(Long idIssue) throws NotFoundException;
+    IssueLogsDto selectLogsByIdIssue(Long idIssue) throws NotFoundException;
     List<IssueInfoDto> selectByMemberUsername(String username);
     List<IssueInfoDto> selectByTag(String nameTag);
     List<IssueInfoDto> selectByPriority(int priority);
 
-    void insertMember(int idIssue, IssueMemberDto teamMember) throws MissingFieldsException, NotFoundException;
-    void insertLogs(int idIssue, IssueLogsDto logs) throws MissingFieldsException, NotFoundException, DuplicateException;
+    void insertLogs(Long idIssue, IssueLogsDto logs) throws MissingFieldsException, NotFoundException, DuplicateException;
+    void insertMember(Long idIssue, IssueMemberDto teamMember) throws MissingFieldsException, NotFoundException;
 
-    void updateStatus(int idIssue, IssueInfoDto issueInfoDto) throws MissingFieldsException, NotFoundException;
+    void updateStatus(Long idIssue, IssueInfoDto issueInfoDto) throws MissingFieldsException, NotFoundException;
 
-    void deleteIssue(int idIssue) throws NotFoundException;
+    void deleteIssue(Long idIssue) throws NotFoundException;
 
     String adviceMember();
 }

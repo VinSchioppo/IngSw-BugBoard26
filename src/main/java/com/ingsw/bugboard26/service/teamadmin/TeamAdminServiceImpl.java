@@ -35,12 +35,14 @@ public class TeamAdminServiceImpl implements TeamAdminService
     @Transactional(readOnly = true)
     public List<TeamAdminInfoDto> selectAll()
     {
-        return TeamAdminConverter.convertToInfoDto(teamAdminRepository.findAll(), modelMapper);
+        return TeamAdminConverter.convertToInfoDto(
+                teamAdminRepository.findAll(), modelMapper);
     }
 
     @Override
     @Transactional(readOnly = true)
     public TeamAdminDto selectByUsername(String username)
+            throws NotFoundException
     {
         return TeamAdminConverter.convertToDto(
                 teamAdminRepository.findByAccountUsername(username), modelMapper);

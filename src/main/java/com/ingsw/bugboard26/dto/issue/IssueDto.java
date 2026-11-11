@@ -21,14 +21,14 @@ public class IssueDto
 {
     private String title;
     private String description;
-    private int priority;
+    private Integer priority;
     private Boolean status;
     private LocalDate dueDate;
 
     private ProjectDto project;
     private TeamMemberInfoDto teamMember;
     private List<IssueTagDto> tags = new ArrayList<>();
-    private List<IssueLogDto> logs = new ArrayList<>();
+    private List<IssueLogDto> issueLogs = new ArrayList<>();
     private List<IssueCommentDto> comments = new ArrayList<>();
     private List<IssueImageDto> images = new ArrayList<>();
 }

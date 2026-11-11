@@ -15,11 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 public class IssueInfoDto
 {
-    private int idIssue;
+    private Long idIssue;
     private String memberUsername;
     private String title;
     private String description;
-    private int priority;
+    private Integer priority;
     private Boolean status;
     private LocalDate dueDate;
 

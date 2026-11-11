@@ -130,12 +130,13 @@ class TeamAdminControllerTest
         notifications.add(notification);
         notifications.add(notification);
 
+        teamAdmin = new JsonObject();
         teamAdmin.add("notifications", notifications);
 
         mvc.perform(put("/api/admins/notifications/Mario")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(teamAdmin.toString())
-                        .accept(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(teamAdmin.toString())
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andDo(print());
 
@@ -144,6 +145,40 @@ class TeamAdminControllerTest
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
+                .andDo(print());
+
+        notification = new JsonObject();
+        notification.addProperty("memberUsername", "Gino");
+
+        notifications = new JsonArray();
+        notifications.add(notification);
+        notifications.add(notification);
+
+        teamAdmin = new JsonObject();
+        teamAdmin.add("notifications", notifications);
+
+        mvc.perform(put("/api/admins/notifications/Mario")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(teamAdmin.toString())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+
+        notification = new JsonObject();
+        notification.addProperty("description", "La notifica di Mario 3.");
+
+        notifications = new JsonArray();
+        notifications.add(notification);
+        notifications.add(notification);
+
+        teamAdmin = new JsonObject();
+        teamAdmin.add("notifications", notifications);
+
+        mvc.perform(put("/api/admins/notifications/Mario")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(teamAdmin.toString())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
                 .andDo(print());
 
         teamAdmin = new JsonObject();

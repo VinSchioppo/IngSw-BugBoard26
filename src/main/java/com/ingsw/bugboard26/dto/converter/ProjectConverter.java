@@ -2,6 +2,7 @@ package com.ingsw.bugboard26.dto.converter;
 
 import com.ingsw.bugboard26.dto.project.*;
 import com.ingsw.bugboard26.entity.Project;
+import com.ingsw.bugboard26.exception.MissingFieldsException;
 import com.ingsw.bugboard26.exception.NotFoundException;
 import org.modelmapper.ModelMapper;
 
@@ -12,16 +13,16 @@ public class ProjectConverter
     private ProjectConverter() {}
 
     public static ProjectDto convertToDto(Project project, ModelMapper modelMapper)
+            throws NotFoundException
     {
-        ProjectDto projectDto = null;
+        if(project == null)
+            throw new NotFoundException("Progetto non trovato.");
 
-        if (project != null)
-            projectDto =  modelMapper.map(project, ProjectDto.class);
-
-        return projectDto;
+        return modelMapper.map(project, ProjectDto.class);
     }
 
     public static List<ProjectDto> convertToDto(List<Project> projects, ModelMapper modelMapper)
+            throws NotFoundException
     {
         return projects
                 .stream()
@@ -30,16 +31,16 @@ public class ProjectConverter
     }
 
     public static ProjectIssuesDto convertToIssuesDto(Project project, ModelMapper modelMapper)
+            throws NotFoundException
     {
-        ProjectIssuesDto projectDto = null;
+        if(project == null)
+            throw new NotFoundException("Progetto non trovato.");
 
-        if (project != null)
-            projectDto =  modelMapper.map(project, ProjectIssuesDto.class);
-
-        return projectDto;
+        return modelMapper.map(project, ProjectIssuesDto.class);
     }
 
     public static List<ProjectIssuesDto> convertToIssuesDto(List<Project> projects, ModelMapper modelMapper)
+            throws NotFoundException
     {
         return projects
                 .stream()
@@ -53,7 +54,7 @@ public class ProjectConverter
     }
 
     public static Project convertFromIssuesDto(Project project, ProjectIssuesDto projectDto, ModelMapper modelMapper)
-            throws NotFoundException
+            throws NotFoundException, MissingFieldsException
     {
         if(project == null)
             throw new NotFoundException("Progetto non trovato.");
@@ -61,12 +62,16 @@ public class ProjectConverter
         Project tmpProject = modelMapper.map(projectDto, Project.class);
         tmpProject.getIssues().forEach(
                 issue -> {
-                    issue.setIdIssue(0);
+                    if(issue.getTitle() == null || issue.getTitle().isEmpty() ||
+                            issue.getDescription() == null || issue.getDescription().isEmpty())
+                        throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
+
+                    issue.setIdIssue(null);
                     issue.setProject(project);
                     issue.setStatus(false);
                     issue.getTags().forEach(tag -> tag.setIssue(issue));
                     issue.getImages().forEach(image -> image.setIssue(issue));
-                    project.addIssue(issue);
+                    project.getIssues().add(issue);
                 });
 
         return project;

@@ -44,10 +44,10 @@ class ProjectControllerTest
         projectService.insertProject(new ProjectDto("Test Project 2", "Un progetto per eseguire test."));
 
         List<IssueInfoDto> issues = new ArrayList<>();
-        issues.add(new IssueInfoDto(0, null, "Issue Test", "Issue per eseguire un test.",
+        issues.add(new IssueInfoDto(0L, null, "Issue Test", "Issue per eseguire un test.",
                 1, false, null, null, null));
 
-        projectService.insertIssues(1, new ProjectIssuesDto("Test Project 1", issues));
+        projectService.insertIssues(1L, new ProjectIssuesDto("Test Project 1", issues));
 
         nRecords = 2;
     }
@@ -144,27 +144,24 @@ class ProjectControllerTest
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.issues", hasSize(1)))
-                .andExpect(jsonPath("$.issues[0].idIssue").value(1))
+                .andExpect(jsonPath("$.issues[0].idIssue").value(2))
                 .andExpect(jsonPath("$.issues[0].title").value("Issue Project 2"))
                 .andExpect(jsonPath("$.issues[0].description").value("La nuova issue del progetto 2."))
                 .andExpect(jsonPath("$.issues[0].priority").value(1))
                 .andExpect(jsonPath("$.issues[0].status").value(false))
                 .andDo(print());
 
-        mvc.perform(put("/api/projects/issues/2")
+        mvc.perform(put("/api/projects/issues/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict())
+                .andExpect(status().isNotFound())
                 .andDo(print());
 
         issue = new JsonObject();
-        issue.addProperty("title", "Seconda Issue Project 2");
-        issue.addProperty("description", "La più nuova issue del progetto 2.");
-        issue.addProperty("priority", 1);
+        issue.addProperty("title", "Issue 3 Project 2");
 
         issues = new JsonArray();
-        issues.add(issue);
         issues.add(issue);
 
         project = new JsonObject();
@@ -174,14 +171,23 @@ class ProjectControllerTest
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict())
+                .andExpect(status().isNoContent())
                 .andDo(print());
 
-        mvc.perform(put("/api/projects/issues/")
+        issue = new JsonObject();
+        issue.addProperty("description", "La ancora più nuova issue del progetto 2.");
+
+        issues = new JsonArray();
+        issues.add(issue);
+
+        project = new JsonObject();
+        project.add("issues", issues);
+
+        mvc.perform(put("/api/projects/issues/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isNoContent())
                 .andDo(print());
 
         project = new JsonObject();

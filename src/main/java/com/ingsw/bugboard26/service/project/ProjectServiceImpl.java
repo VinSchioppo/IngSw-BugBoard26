@@ -40,7 +40,8 @@ public class ProjectServiceImpl implements ProjectService
 
     @Override
     @Transactional(readOnly = true)
-    public ProjectIssuesDto selectByIdProject(int idProject)
+    public ProjectIssuesDto selectByIdProject(Long idProject)
+            throws NotFoundException
     {
         return ProjectConverter.convertToIssuesDto(
                 projectRepository.findByIdProject(idProject), modelMapper);
@@ -53,15 +54,16 @@ public class ProjectServiceImpl implements ProjectService
         if(projectDto == null)
             throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
 
-        if((projectDto.getTitle() == null || projectDto.getTitle().isEmpty()) ||
-            (projectDto.getDescription() == null || projectDto.getDescription().isEmpty()))
+        if(projectDto.getTitle() == null || projectDto.getTitle().isEmpty() ||
+            projectDto.getDescription() == null || projectDto.getDescription().isEmpty())
             throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
 
-        projectRepository.saveAndFlush(ProjectConverter.covertFromDto(projectDto, modelMapper));
+        projectRepository.saveAndFlush(
+                ProjectConverter.covertFromDto(projectDto, modelMapper));
     }
 
     @Override
-    public void insertIssues(int idProject, ProjectIssuesDto issues)
+    public void insertIssues(Long idProject, ProjectIssuesDto issues)
             throws MissingFieldsException, NotFoundException
     {
         if(issues == null)
@@ -76,11 +78,14 @@ public class ProjectServiceImpl implements ProjectService
     }
 
     @Override
-    public void updateProject(int idProject, ProjectDto projectDto)
+    public void updateProject(Long idProject, ProjectDto projectDto)
             throws MissingFieldsException, NotFoundException
     {
         if(projectDto == null)
             throw new MissingFieldsException("È necessario un body per esegire questa richiesta.");
+        if((projectDto.getTitle() == null || projectDto.getTitle().isEmpty()) &&
+        (projectDto.getDescription() == null || projectDto.getDescription().isEmpty()))
+            throw new MissingFieldsException("Uno o più campi richiesti sono vuoti.");
 
         String title = projectDto.getTitle();
         String description = projectDto.getDescription();
@@ -93,7 +98,7 @@ public class ProjectServiceImpl implements ProjectService
     }
 
     @Override
-    public void deleteProject(int idProject)
+    public void deleteProject(Long idProject)
             throws NotFoundException
     {
         var project = projectRepository.findByIdProject(idProject);

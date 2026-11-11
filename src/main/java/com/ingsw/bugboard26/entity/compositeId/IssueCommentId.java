@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class IssueCommentId
 {
-    private int idIssue;
+    private Long idIssue;
 
     private String memberUsername;
 

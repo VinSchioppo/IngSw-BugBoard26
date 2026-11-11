@@ -10,7 +10,7 @@ import java.util.List;
 public interface TeamAdminService
 {
     List<TeamAdminInfoDto> selectAll();
-    TeamAdminDto selectByUsername(String username);
+    TeamAdminDto selectByUsername(String username) throws NotFoundException;
 
     void insertNotifications(String username, TeamAdminDto notifications) throws MissingFieldsException, NotFoundException, DuplicateException;
 

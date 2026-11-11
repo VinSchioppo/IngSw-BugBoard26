@@ -12,7 +12,7 @@ import java.util.List;
 @EnableJpaRepositories
 public interface IssueRepository extends JpaRepository<Issue, Integer>
 {
-    Issue findByIdIssue(int idIssue);
+    Issue findByIdIssue(Long idIssue);
     List<Issue> findByTeamMemberUsername(String username);
     List<Issue> findByTagsNameTag(String nameTag);
     List<Issue> findByPriority(int prority);

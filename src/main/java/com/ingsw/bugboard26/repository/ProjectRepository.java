@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @EnableJpaRepositories
 public interface ProjectRepository extends JpaRepository<Project, Long>
 {
-    Project findByIdProject(int idProject);
+    Project findByIdProject(Long idProject);
 }
