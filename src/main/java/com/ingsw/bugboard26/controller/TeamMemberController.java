@@ -92,7 +92,7 @@ public class TeamMemberController
         return new ResponseEntity<TeamMemberCommentsDto>(member, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/signup")
+    @PostMapping(value = "/signup")
     public ResponseEntity<List<TeamMemberInfoDto>> signUp(@RequestBody List<TeamMemberInfoDto> teamMembers)
     {
         logger.info("****** Registriamo i nuovi utenti *******");
@@ -104,7 +104,7 @@ public class TeamMemberController
         return new ResponseEntity<List<TeamMemberInfoDto>>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/comments/{username}")
+    @PostMapping(value = "/comments/{username}")
     public ResponseEntity<TeamMemberCommentsDto> postComments(
             @PathVariable("username") String username, @RequestBody TeamMemberCommentsDto comments)
     {
@@ -117,7 +117,7 @@ public class TeamMemberController
         return new ResponseEntity<TeamMemberCommentsDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/notifications/{username}")
+    @PostMapping(value = "/notifications/{username}")
     public ResponseEntity<TeamMemberNotificationsDto> sendNotifications(
             @PathVariable("username") String username, @RequestBody TeamMemberNotificationsDto notifications)
     {
@@ -130,7 +130,7 @@ public class TeamMemberController
         return new ResponseEntity<TeamMemberNotificationsDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/password/{username}")
+    @PutMapping(value = "/password/{username}")
     public ResponseEntity<TeamMemberInfoDto> changePassword(
             @PathVariable("username") String username, @RequestBody TeamMemberInfoDto password)
     {
@@ -143,7 +143,7 @@ public class TeamMemberController
         return new ResponseEntity<TeamMemberInfoDto>(new HttpHeaders(), HttpStatus.ACCEPTED);
     }
 
-    @PostMapping(value = "/promotion")
+    @PutMapping(value = "/promotion")
     public ResponseEntity<List<TeamMemberInfoDto>> promoteMembers(@RequestBody List<TeamMemberInfoDto> teamMembers)
     {
         logger.info("****** Promuoviamo utenti ad admin *******");
@@ -155,7 +155,7 @@ public class TeamMemberController
         return new ResponseEntity<List<TeamMemberInfoDto>>(new HttpHeaders(), HttpStatus.ACCEPTED);
     }
 
-    @PostMapping(value = "/notifications/{username}")
+    @PutMapping(value = "/notifications/{username}")
     public ResponseEntity<TeamMemberNotificationsDto> changeStatusNotifications(
             @PathVariable("username") String username, @RequestBody TeamMemberNotificationsDto notifications)
     {

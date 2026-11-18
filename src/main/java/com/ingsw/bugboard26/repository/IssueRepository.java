@@ -15,7 +15,9 @@ public interface IssueRepository extends JpaRepository<Issue, Integer>
     Issue findByIdIssue(Long idIssue);
     List<Issue> findByTeamMemberUsername(String username);
     List<Issue> findByTagsNameTag(String nameTag);
-    List<Issue> findByPriority(int prority);
+    List<Issue> findByPriority(int priority);
+    List<Issue> findByStatus(boolean status);
+
 
     @Query("select i.teamMember.username, count(i.teamMember) as countMember " +
             "from Issue as i " +

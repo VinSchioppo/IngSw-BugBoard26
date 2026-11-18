@@ -99,7 +99,7 @@ class TeamAdminControllerTest
         JsonObject teamAdmin = new JsonObject();
         teamAdmin.add("notifications", notifications);
 
-        mvc.perform(put("/api/admins/notifications/Mario")
+        mvc.perform(post("/api/admins/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -115,7 +115,7 @@ class TeamAdminControllerTest
                 .andExpect(jsonPath("$.notifications[0].description").value("La notifica di Mario."))
                 .andDo(print());
 
-        mvc.perform(put("/api/admins/notifications/Mario")
+        mvc.perform(post("/api/admins/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -133,14 +133,14 @@ class TeamAdminControllerTest
         teamAdmin = new JsonObject();
         teamAdmin.add("notifications", notifications);
 
-        mvc.perform(put("/api/admins/notifications/Mario")
+        mvc.perform(post("/api/admins/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andDo(print());
 
-        mvc.perform(put("/api/admins/notifications/")
+        mvc.perform(post("/api/admins/notifications/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -157,7 +157,7 @@ class TeamAdminControllerTest
         teamAdmin = new JsonObject();
         teamAdmin.add("notifications", notifications);
 
-        mvc.perform(put("/api/admins/notifications/Mario")
+        mvc.perform(post("/api/admins/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -174,7 +174,7 @@ class TeamAdminControllerTest
         teamAdmin = new JsonObject();
         teamAdmin.add("notifications", notifications);
 
-        mvc.perform(put("/api/admins/notifications/Mario")
+        mvc.perform(post("/api/admins/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -183,7 +183,7 @@ class TeamAdminControllerTest
 
         teamAdmin = new JsonObject();
 
-        mvc.perform(put("/api/admins/notifications/Mario")
+        mvc.perform(post("/api/admins/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -211,7 +211,7 @@ class TeamAdminControllerTest
                 .andExpect(jsonPath("$.notifications", hasSize(1)))
                 .andDo(print());
 
-        mvc.perform(post("/api/admins/notifications/Gino")
+        mvc.perform(put("/api/admins/notifications/Gino")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -225,7 +225,7 @@ class TeamAdminControllerTest
                 .andExpect(jsonPath("$.notifications", hasSize(0)))
                 .andDo(print());
 
-        mvc.perform(post("/api/admins/notifications/")
+        mvc.perform(put("/api/admins/notifications/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -234,7 +234,7 @@ class TeamAdminControllerTest
 
         teamAdmin = new JsonObject();
 
-        mvc.perform(post("/api/admins/notifications/Gino")
+        mvc.perform(put("/api/admins/notifications/Gino")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -292,7 +292,7 @@ class TeamAdminControllerTest
                 .andExpect(jsonPath("$.notifications[0].description").value("La notifica di Gino."))
                 .andDo(print());
 
-        mvc.perform(post("/api/admins/notifications/Gino")
+        mvc.perform(put("/api/admins/notifications/Gino")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamAdmin.toString())
                 .accept(MediaType.APPLICATION_JSON))

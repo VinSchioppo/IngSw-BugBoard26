@@ -15,6 +15,8 @@ public interface IssueService
     List<IssueInfoDto> selectByMemberUsername(String username);
     List<IssueInfoDto> selectByTag(String nameTag);
     List<IssueInfoDto> selectByPriority(int priority);
+    List<IssueInfoDto> selectByStatus(boolean status);
+    //List<IssueInfoDto> selectWithFilters(String member, Integer priority, Boolean status, String tag);
 
     void insertLogs(Long idIssue, IssueLogsDto logs) throws MissingFieldsException, NotFoundException, DuplicateException;
     void insertMember(Long idIssue, IssueMemberDto teamMember) throws MissingFieldsException, NotFoundException;

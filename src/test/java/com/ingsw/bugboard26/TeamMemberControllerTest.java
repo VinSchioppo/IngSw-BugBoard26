@@ -202,7 +202,7 @@ class TeamMemberControllerTest
         JsonArray teamMembers = new JsonArray();
         teamMembers.add(teamMember);
 
-        mvc.perform(put("/api/members/signup")
+        mvc.perform(post("/api/members/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMembers.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -217,7 +217,7 @@ class TeamMemberControllerTest
                 .andExpect(jsonPath("email").value("alfredo@gmail.com"))
                 .andDo(print());
 
-        mvc.perform(put("/api/members/signup")
+        mvc.perform(post("/api/members/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMembers.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -234,7 +234,7 @@ class TeamMemberControllerTest
         teamMembers.add(teamMember);
         teamMembers.add(teamMember);
 
-        mvc.perform(put("/api/members/signup")
+        mvc.perform(post("/api/members/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMembers.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -248,7 +248,7 @@ class TeamMemberControllerTest
         teamMembers = new JsonArray();
         teamMembers.add(teamMember);
 
-        mvc.perform(put("/api/members/signup")
+        mvc.perform(post("/api/members/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMembers.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -262,7 +262,7 @@ class TeamMemberControllerTest
         teamMembers = new JsonArray();
         teamMembers.add(teamMember);
 
-        mvc.perform(put("/api/members/signup")
+        mvc.perform(post("/api/members/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMembers.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -276,7 +276,7 @@ class TeamMemberControllerTest
         teamMembers = new JsonArray();
         teamMembers.add(teamMember);
 
-        mvc.perform(put("/api/members/signup")
+        mvc.perform(post("/api/members/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMembers.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -285,7 +285,7 @@ class TeamMemberControllerTest
 
         teamMembers = new JsonArray();
 
-        mvc.perform(put("/api/members/signup")
+        mvc.perform(post("/api/members/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMembers.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -306,7 +306,7 @@ class TeamMemberControllerTest
         JsonObject teamMember = new JsonObject();
         teamMember.add("comments", comments);
 
-        mvc.perform(put("/api/members/comments/Mario")
+        mvc.perform(post("/api/members/comments/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -323,7 +323,7 @@ class TeamMemberControllerTest
                 .andExpect(jsonPath("$.comments[0].idIssue").value(1))
                 .andDo(print());
 
-        mvc.perform(put("/api/members/comments/Mario")
+        mvc.perform(post("/api/members/comments/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -341,14 +341,14 @@ class TeamMemberControllerTest
         teamMember = new JsonObject();
         teamMember.add("comments", comments);
 
-        mvc.perform(put("/api/members/comments/Mario")
+        mvc.perform(post("/api/members/comments/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andDo(print());
 
-        mvc.perform(put("/api/members/comments/")
+        mvc.perform(post("/api/members/comments/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -364,7 +364,7 @@ class TeamMemberControllerTest
         teamMember = new JsonObject();
         teamMember.add("comments", comments);
 
-        mvc.perform(put("/api/members/comments/Mario")
+        mvc.perform(post("/api/members/comments/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -380,7 +380,7 @@ class TeamMemberControllerTest
         teamMember = new JsonObject();
         teamMember.add("comments", comments);
 
-        mvc.perform(put("/api/members/comments/Mario")
+        mvc.perform(post("/api/members/comments/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -389,7 +389,7 @@ class TeamMemberControllerTest
 
         teamMember = new JsonObject();
 
-        mvc.perform(put("/api/members/comments/Mario")
+        mvc.perform(post("/api/members/comments/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -410,7 +410,7 @@ class TeamMemberControllerTest
         JsonObject teamMember = new JsonObject();
         teamMember.add("notifications", notifications);
 
-        mvc.perform(put("/api/members/notifications/Mario")
+        mvc.perform(post("/api/members/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -426,7 +426,7 @@ class TeamMemberControllerTest
                 .andExpect(jsonPath("$.notifications[0].description").value("La notifica di Mario."))
                 .andDo(print());
 
-        mvc.perform(put("/api/members/notifications/Mario")
+        mvc.perform(post("/api/members/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -444,14 +444,14 @@ class TeamMemberControllerTest
         teamMember = new JsonObject();
         teamMember.add("notifications", notifications);
 
-        mvc.perform(put("/api/members/notifications/Mario")
+        mvc.perform(post("/api/members/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andDo(print());
 
-        mvc.perform(put("/api/members/notifications/")
+        mvc.perform(post("/api/members/notifications/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -467,7 +467,7 @@ class TeamMemberControllerTest
         teamMember = new JsonObject();
         teamMember.add("notifications", notifications);
 
-        mvc.perform(put("/api/members/notifications/Mario")
+        mvc.perform(post("/api/members/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -483,7 +483,7 @@ class TeamMemberControllerTest
         teamMember = new JsonObject();
         teamMember.add("notifications", notifications);
 
-        mvc.perform(put("/api/members/notifications/Mario")
+        mvc.perform(post("/api/members/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -492,7 +492,7 @@ class TeamMemberControllerTest
 
         teamMember = new JsonObject();
 
-        mvc.perform(put("/api/members/notifications/Mario")
+        mvc.perform(post("/api/members/notifications/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -506,14 +506,14 @@ class TeamMemberControllerTest
         JsonObject teamMember = new JsonObject();
         teamMember.addProperty("password", "Mario456");
 
-        mvc.perform(post("/api/members/password/Mario")
+        mvc.perform(put("/api/members/password/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted())
                 .andDo(print());
 
-        mvc.perform(post("/api/members/password/")
+        mvc.perform(put("/api/members/password/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -523,7 +523,7 @@ class TeamMemberControllerTest
         teamMember = new JsonObject();
         teamMember.addProperty("username", "Mario");
 
-        mvc.perform(post("/api/members/password/Mario")
+        mvc.perform(put("/api/members/password/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -532,7 +532,7 @@ class TeamMemberControllerTest
 
         teamMember = new JsonObject();
 
-        mvc.perform(post("/api/members/password/Mario")
+        mvc.perform(put("/api/members/password/Mario")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -554,7 +554,7 @@ class TeamMemberControllerTest
                 .andExpect(status().isNotFound())
                 .andDo(print());
 
-        mvc.perform(post("/api/members/promotion")
+        mvc.perform(put("/api/members/promotion")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMembers.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -572,7 +572,7 @@ class TeamMemberControllerTest
         teamMembers = new JsonArray();
         teamMembers.add(teamMember);
 
-        mvc.perform(post("/api/members/promotion")
+        mvc.perform(put("/api/members/promotion")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMembers.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -581,7 +581,7 @@ class TeamMemberControllerTest
 
         teamMembers = new JsonArray();
 
-        mvc.perform(post("/api/members/promotion")
+        mvc.perform(put("/api/members/promotion")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMembers.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -609,7 +609,7 @@ class TeamMemberControllerTest
                 .andExpect(jsonPath("$.notifications", hasSize(1)))
                 .andDo(print());
 
-        mvc.perform(post("/api/members/notifications/Gino")
+        mvc.perform(put("/api/members/notifications/Gino")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -623,7 +623,7 @@ class TeamMemberControllerTest
                 .andExpect(jsonPath("$.notifications", hasSize(0)))
                 .andDo(print());
 
-        mvc.perform(post("/api/members/notifications/")
+        mvc.perform(put("/api/members/notifications/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -639,7 +639,7 @@ class TeamMemberControllerTest
         teamMember = new JsonObject();
         teamMember.add("notifications", notifications);
 
-        mvc.perform(post("/api/members/notifications/Gino")
+        mvc.perform(put("/api/members/notifications/Gino")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -655,7 +655,7 @@ class TeamMemberControllerTest
         teamMember = new JsonObject();
         teamMember.add("notifications", notifications);
 
-        mvc.perform(post("/api/members/notifications/Gino")
+        mvc.perform(put("/api/members/notifications/Gino")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -664,7 +664,7 @@ class TeamMemberControllerTest
 
         teamMember = new JsonObject();
 
-        mvc.perform(post("/api/members/notifications/Gino")
+        mvc.perform(put("/api/members/notifications/Gino")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -723,7 +723,7 @@ class TeamMemberControllerTest
                 .andExpect(jsonPath("$.notifications[0].description").value("La notifica di Gino."))
                 .andDo(print());
 
-        mvc.perform(post("/api/members/notifications/Gino")
+        mvc.perform(put("/api/members/notifications/Gino")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(teamMember.toString())
                 .accept(MediaType.APPLICATION_JSON))

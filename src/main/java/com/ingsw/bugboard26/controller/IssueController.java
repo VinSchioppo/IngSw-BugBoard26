@@ -98,7 +98,40 @@ public class IssueController
         return new ResponseEntity<List<IssueInfoDto>>(issues, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/logs/{idIssue}")
+    @GetMapping(params = "status", produces = "application/json")
+    public ResponseEntity<List<IssueInfoDto>> getIssuesByStatus(@RequestParam(name = "status") Boolean status)
+    {
+        logger.info("****** Cerchiamo le issues con status {} *******", status);
+
+        List<IssueInfoDto> issues = issueService.selectByStatus(status);
+
+        logger.info("Numero dei record: {}.", issues.size());
+
+        return new ResponseEntity<List<IssueInfoDto>>(issues, HttpStatus.OK);
+    }
+
+    /*@GetMapping(params = {"member", "priority", "status", "tag"},
+            produces = "application/json")
+    public ResponseEntity<List<IssueInfoDto>> getIssuesWithFilters(
+            @RequestParam(name = "member", required = false) String member,
+            @RequestParam(name = "priority", required = false) Integer priority,
+            @RequestParam(name = "status", required = false) Boolean status,
+            @RequestParam(name = "tag", required = false) String tag)
+    {
+        String message = String.format("****** Cerchiamo le issues con " +
+                        "member=%s, priority=%d, status=%s, tag=%s *******",
+                        member, priority, status, tag);
+
+        logger.info(message);
+
+        List<IssueInfoDto> issues = issueService.selectWithFilters(member, priority, status, tag);
+
+        logger.info("Numero dei record: {}.", issues.size());
+
+        return new ResponseEntity<List<IssueInfoDto>>(issues, HttpStatus.OK);
+    }*/
+
+    @PostMapping(value = "/logs/{idIssue}")
     public ResponseEntity<IssueLogsDto> logChange(
             @PathVariable("idIssue") Long idIssue, @RequestBody IssueLogsDto logs)
     {
@@ -111,7 +144,7 @@ public class IssueController
         return new ResponseEntity<IssueLogsDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/member/{idIssue}")
+    @PutMapping(value = "/member/{idIssue}")
     public ResponseEntity<IssueMemberDto> assignMember(
             @PathVariable("idIssue") Long idIssue, @RequestBody IssueMemberDto member)
     {
@@ -124,7 +157,7 @@ public class IssueController
         return new ResponseEntity<IssueMemberDto>(new HttpHeaders(), HttpStatus.ACCEPTED);
     }
 
-    @PostMapping(value = "/status/{idIssue}")
+    @PutMapping(value = "/status/{idIssue}")
     public ResponseEntity<IssueInfoDto> changeStatus(
             @PathVariable("idIssue") Long idIssue, @RequestBody IssueInfoDto issue)
     {

@@ -86,6 +86,62 @@ public class IssueServiceImpl implements IssueService
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<IssueInfoDto> selectByStatus(boolean status)
+    {
+        return IssueConverter.convertToInfoDto(
+                issueRepository.findByStatus(status), modelMapper);
+    }
+
+    /*@Override
+    @Transactional(readOnly = true)
+    public List<IssueInfoDto> selectWithFilters(
+            String member, Integer priority, Boolean status, String tag)
+    {
+        List<IssueInfoDto> issues = null;
+
+        if(member != null && !member.isEmpty())
+            issues = IssueConverter.convertToInfoDto(
+                    issueRepository.findByTeamMemberUsername(member), modelMapper);
+        if(priority != null)
+        {
+            if(issues == null)
+                issues = IssueConverter.convertToInfoDto(
+                        issueRepository.findByPriority(priority), modelMapper);
+            else
+                issues.removeIf(issue -> !issue.getPriority().equals(priority));
+        }
+        if(status != null)
+        {
+            if(issues == null)
+                issues = IssueConverter.convertToInfoDto(
+                        issueRepository.findByStatus(status), modelMapper);
+            else
+                issues.removeIf(issue -> !issue.getStatus().equals(status));
+        }
+        if(tag != null && !tag.isEmpty())
+        {
+            if(issues == null)
+                issues = IssueConverter.convertToInfoDto(
+                        issueRepository.findByTagsNameTag(tag), modelMapper);
+            else
+                issues.removeIf(issue -> {
+                    for(var issueTag : issue.getTags())
+                    {
+                        if(issueTag.getNameTag().equals(tag))
+                            return false;
+                    }
+                    return true;
+                });
+        }
+
+        if(issues == null)
+            issues = new ArrayList<>();
+
+        return issues;
+    }*/
+
+    @Override
     public void insertLogs(Long idIssue, IssueLogsDto logs)
             throws MissingFieldsException, NotFoundException, DuplicateException
     {

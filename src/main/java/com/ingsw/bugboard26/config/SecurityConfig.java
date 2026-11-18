@@ -30,8 +30,8 @@ public class SecurityConfig
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth/**").permitAll();
                     auth.requestMatchers("/api/admins/**").hasRole(ADMIN);
-                    auth.requestMatchers(HttpMethod.PUT,"/api/members/signup","/api/projects").hasRole(ADMIN);
-                    auth.requestMatchers(HttpMethod.POST,"/api/members/promotion","/api/issues/member").hasRole(ADMIN);
+                    auth.requestMatchers(HttpMethod.POST,"/api/members/signup","/api/projects").hasRole(ADMIN);
+                    auth.requestMatchers(HttpMethod.PUT,"/api/members/promotion","/api/issues/member").hasRole(ADMIN);
                     auth.requestMatchers(HttpMethod.DELETE,"/api/members","/api/issues","/api/projects").hasRole(ADMIN);
                     auth.anyRequest().authenticated();
                 })

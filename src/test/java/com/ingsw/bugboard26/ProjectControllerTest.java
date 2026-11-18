@@ -92,7 +92,7 @@ class ProjectControllerTest
         project.addProperty("title", "Project 3");
         project.addProperty("description", "Il nuovo progetto per eseguire il test.");
 
-        mvc.perform(put("/api/projects")
+        mvc.perform(post("/api/projects")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -109,7 +109,7 @@ class ProjectControllerTest
 
         project = new JsonObject();
 
-        mvc.perform(put("/api/projects/issues/2")
+        mvc.perform(post("/api/projects/issues/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -132,7 +132,7 @@ class ProjectControllerTest
         project.addProperty("title", "Project 3");
         project.add("issues", issues);
 
-        mvc.perform(put("/api/projects/issues/2")
+        mvc.perform(post("/api/projects/issues/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -151,7 +151,7 @@ class ProjectControllerTest
                 .andExpect(jsonPath("$.issues[0].status").value(false))
                 .andDo(print());
 
-        mvc.perform(put("/api/projects/issues/")
+        mvc.perform(post("/api/projects/issues/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -167,7 +167,7 @@ class ProjectControllerTest
         project = new JsonObject();
         project.add("issues", issues);
 
-        mvc.perform(put("/api/projects/issues/2")
+        mvc.perform(post("/api/projects/issues/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -183,7 +183,7 @@ class ProjectControllerTest
         project = new JsonObject();
         project.add("issues", issues);
 
-        mvc.perform(put("/api/projects/issues/2")
+        mvc.perform(post("/api/projects/issues/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -192,7 +192,7 @@ class ProjectControllerTest
 
         project = new JsonObject();
 
-        mvc.perform(put("/api/projects/issues/2")
+        mvc.perform(post("/api/projects/issues/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -215,7 +215,7 @@ class ProjectControllerTest
         project.addProperty("title", "Test Update Project 2");
         project.addProperty("description", "Un progetto per eseguire test.");
 
-        mvc.perform(post("/api/projects/2")
+        mvc.perform(put("/api/projects/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -233,7 +233,7 @@ class ProjectControllerTest
         project = new JsonObject();
         project.addProperty("title", "Test Update Project 2");
 
-        mvc.perform(post("/api/projects/2")
+        mvc.perform(put("/api/projects/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -243,14 +243,14 @@ class ProjectControllerTest
         project = new JsonObject();
         project.addProperty("description", "Un progetto per eseguire test.");
 
-        mvc.perform(post("/api/projects/2")
+        mvc.perform(put("/api/projects/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted())
                 .andDo(print());
 
-        mvc.perform(post("/api/projects/")
+        mvc.perform(put("/api/projects/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -259,7 +259,7 @@ class ProjectControllerTest
 
         project = new JsonObject();
 
-        mvc.perform(post("/api/projects/2")
+        mvc.perform(put("/api/projects/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(project.toString())
                 .accept(MediaType.APPLICATION_JSON))

@@ -56,7 +56,7 @@ public class TeamAdminController
         return new ResponseEntity<TeamAdminDto>(admin, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/notifications/{username}")
+    @PostMapping(value = "/notifications/{username}")
     public ResponseEntity<TeamAdminDto> sendNotifications(
             @PathVariable("username") String username, @RequestBody TeamAdminDto notification)
     {
@@ -69,7 +69,7 @@ public class TeamAdminController
         return new ResponseEntity<TeamAdminDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/notifications/{username}")
+    @PutMapping(value = "/notifications/{username}")
     public ResponseEntity<TeamAdminDto> changeStatusNotifications(
             @PathVariable("username") String username, @RequestBody TeamAdminDto notifications)
     {

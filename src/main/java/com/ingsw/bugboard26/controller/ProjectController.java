@@ -53,7 +53,7 @@ public class ProjectController
         return new ResponseEntity<ProjectIssuesDto>(project, HttpStatus.OK);
     }
 
-    @PutMapping
+    @PostMapping
     public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto project)
     {
         logger.info("****** Creiamo un nuovo progetto *******");
@@ -65,7 +65,7 @@ public class ProjectController
         return new ResponseEntity<ProjectDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/issues/{idProject}")
+    @PostMapping(value = "/issues/{idProject}")
     public ResponseEntity<ProjectIssuesDto> reportIssue(
             @PathVariable("idProject") Long idProject, @RequestBody ProjectIssuesDto issue)
     {
@@ -78,7 +78,7 @@ public class ProjectController
         return new ResponseEntity<ProjectIssuesDto>(new HttpHeaders(), HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/{idProject}")
+    @PutMapping(value = "/{idProject}")
     public ResponseEntity<ProjectDto> changeInfo(
             @PathVariable("idProject") Long idProject, @RequestBody ProjectDto projectDto)
     {

@@ -222,6 +222,31 @@ class IssueControllerTest
     }
 
     @Test
+    void getIssueByStatusTest() throws Exception
+    {
+        mvc.perform(get("/api/issues?status=false")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.*", hasSize(2)))
+                .andExpect(jsonPath("$[0].idIssue").value(1))
+                .andExpect(jsonPath("$[0].title").value("Test Issue 1"))
+                .andExpect(jsonPath("$[0].description").value("Issue 1 per eseguire un test."))
+                .andExpect(jsonPath("$[0].priority").value(1))
+                .andExpect(jsonPath("$[0].status").value(false))
+                .andExpect(jsonPath("$[0].memberUsername").value("Mario"))
+                .andExpect(jsonPath("$[0].tags[0].nameTag").value("test"))
+                .andDo(print());
+
+        mvc.perform(get("/api/issues?status=true")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.*", hasSize(0)))
+                .andDo(print());
+    }
+
+    @Test
     void logChangeTest() throws Exception
     {
         JsonObject log = new JsonObject();
@@ -233,7 +258,7 @@ class IssueControllerTest
         JsonObject issueLogs = new JsonObject();
         issueLogs.add("issueLogs", logs);
 
-        mvc.perform(put("/api/issues/logs/2")
+        mvc.perform(post("/api/issues/logs/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issueLogs.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -248,7 +273,7 @@ class IssueControllerTest
                 .andExpect(jsonPath("$.issueLogs[0].description").value("Test insert issue logs."))
                 .andDo(print());
 
-        mvc.perform(put("/api/issues/logs/2")
+        mvc.perform(post("/api/issues/logs/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issueLogs.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -265,7 +290,7 @@ class IssueControllerTest
         issueLogs = new JsonObject();
         issueLogs.add("issueLogs", logs);
 
-        mvc.perform(put("/api/issues/logs/2")
+        mvc.perform(post("/api/issues/logs/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issueLogs.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -287,7 +312,7 @@ class IssueControllerTest
         issueLogs = new JsonObject();
         issueLogs.add("issueLogs", logs);
 
-        mvc.perform(put("/api/issues/logs/2")
+        mvc.perform(post("/api/issues/logs/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issueLogs.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -296,7 +321,7 @@ class IssueControllerTest
 
         issueLogs = new JsonObject();
 
-        mvc.perform(put("/api/issues/logs/2")
+        mvc.perform(post("/api/issues/logs/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issueLogs.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -324,7 +349,7 @@ class IssueControllerTest
                 .andExpect(jsonPath("$.status").value(false))
                 .andDo(print());
 
-        mvc.perform(post("/api/issues/member/2")
+        mvc.perform(put("/api/issues/member/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issue.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -343,7 +368,7 @@ class IssueControllerTest
                 .andExpect(jsonPath("$.teamMember.username").value("Mario"))
                 .andDo(print());
 
-        mvc.perform(post("/api/issues/")
+        mvc.perform(put("/api/issues/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issue.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -356,7 +381,7 @@ class IssueControllerTest
         issue = new JsonObject();
         issue.add("teamMember", teamMember);
 
-        mvc.perform(post("/api/issues/member/2")
+        mvc.perform(put("/api/issues/member/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issue.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -369,7 +394,7 @@ class IssueControllerTest
         issue = new JsonObject();
         issue.add("teamMember", teamMember);
 
-        mvc.perform(post("/api/issues/member/2")
+        mvc.perform(put("/api/issues/member/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issue.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -378,7 +403,7 @@ class IssueControllerTest
 
         issue = new JsonObject();
 
-        mvc.perform(post("/api/issues/member/2")
+        mvc.perform(put("/api/issues/member/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issue.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -403,7 +428,7 @@ class IssueControllerTest
                 .andExpect(jsonPath("$.status").value(false))
                 .andDo(print());
 
-        mvc.perform(post("/api/issues/status/2")
+        mvc.perform(put("/api/issues/status/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issue.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -422,7 +447,7 @@ class IssueControllerTest
                 .andExpect(jsonPath("$.project.title").value("Test Project"))
                 .andDo(print());
 
-        mvc.perform(post("/api/issues/status/")
+        mvc.perform(put("/api/issues/status/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issue.toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -431,7 +456,7 @@ class IssueControllerTest
 
         issue = new JsonObject();
 
-        mvc.perform(post("/api/issues/status/2")
+        mvc.perform(put("/api/issues/status/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(issue.toString())
                 .accept(MediaType.APPLICATION_JSON))
